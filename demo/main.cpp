@@ -117,7 +117,7 @@ int main() {
 
 		auto endIterator = endIterator1 || endIterator2;
 
-		auto it = ph::find(v.begin(), endIterator /*|| v.end()*/, 300);
+		auto it = ph::find(v.begin(), endIterator || v.end(), 300);
 
 		assert(it != v.end());
 

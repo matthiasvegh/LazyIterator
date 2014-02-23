@@ -87,12 +87,14 @@ bool checkPredicate(Iterator it, ConstraintToCheck constraint) {
 }
 
 template<class Iterator, class T1, std::size_t Index = 0>
-typename std::enable_if<Index >= std::tuple_size<T1>::value, bool>::type checkPredicates(Iterator&& it, const T1& predicates) {
+typename std::enable_if<Index >= std::tuple_size<T1>::value, bool>::type
+checkPredicates(Iterator&& it, const T1& predicates) {
 	return false;
 }
 
 template<class Iterator, class T1, std::size_t Index = 0>
-typename std::enable_if<Index < std::tuple_size<T1>::value, bool>::type checkPredicates(Iterator&& it, const T1& predicates) {
+typename std::enable_if<Index < std::tuple_size<T1>::value, bool>::type
+checkPredicates(Iterator&& it, const T1& predicates) {
 	return checkPredicate(it, std::get<Index>(predicates)) || checkPredicates<Iterator, T1, Index+1>(it, predicates);
 }
 
@@ -130,7 +132,7 @@ template<class T1, typename RealIterator>
 inline
 auto operator||(const Until<T1>& t1, RealIterator iterator) {
 	auto lambda = [=](RealIterator it) { return it == iterator; };
-	return concatUntils(t1, Until<decltype(lambda)>(lambda));
+	return concatUntils(t1, Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda))));
 }
 
 template<typename Predicate>
