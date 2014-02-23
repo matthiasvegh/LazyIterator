@@ -48,7 +48,6 @@ struct Until_t {
 					>::type
 				>::type
 				,
-		//		typename std::decay<typename std::remove_reference<Iterator>::type::value_type>::type
 				decltype(*std::declval<Iterator>())
 			>::value
 	>
