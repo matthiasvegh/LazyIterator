@@ -58,5 +58,38 @@ BOOST_AUTO_TEST_CASE(Until_with_value_predicate_should_not_compare_equal_to_iter
 	BOOST_CHECK(iterator != ++(v.begin()));
 }
 
+BOOST_AUTO_TEST_CASE(When_Untils_are_composed_find_should_stop_when_any_of_them_compare_equal) {
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+	v.push_back(4);
+
+	auto iterator1 = ph::Until([](const int& i) { return i == 3; });
+	auto iterator2 = ph::Until([](const int& i) { return i == 4; });
+
+	auto pos = ph::find(v.begin(), iterator1 || iterator2, 5);
+
+	BOOST_CHECK_EQUAL(*pos, 3);
+
+}
+
+BOOST_AUTO_TEST_CASE(Using_find_until_composition_should_be_commutative) {
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+	v.push_back(4);
+
+	auto iterator1 = ph::Until([](const int& i) { return i == 3; });
+	auto iterator2 = ph::Until([](const int& i) { return i == 4; });
+
+	auto pos1 = ph::find(v.begin(), iterator1 || iterator2, 5);
+	auto pos2 = ph::find(v.begin(), iterator2 || iterator1, 5);
+
+	BOOST_CHECK_EQUAL(std::addressof(*pos1), std::addressof(*pos2));
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
