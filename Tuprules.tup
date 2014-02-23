@@ -6,7 +6,7 @@ DEMO_DIR = $(ROOT_DIR)/demo
 UT_DIR = $(ROOT_DIR)/ut
 INCLUDE_DIR = $(ROOT_DIR)/include
 
-CXX = clang++
+CXX = @(CXX)
 LD = $(CXX)
 
 CXX_FLAGS += -O3
