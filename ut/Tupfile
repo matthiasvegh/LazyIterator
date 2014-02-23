@@ -2,7 +2,9 @@
 
 include_rules
 
-LD_FLAGS += /usr/local/lib/libboost_unit_test_framework.a
+LIBS += /usr/local/lib/libboost_unit_test_framework.a
+
+
 
 : foreach tests/*.cpp *.cpp |> !cxx |>
 : *.o tests/*.o |> !ld |> unitTest
