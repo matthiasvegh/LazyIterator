@@ -25,7 +25,6 @@ int main() {
 
 	// test str complete. now for testing.
 
-
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 
@@ -76,14 +75,15 @@ int main() {
 	}
 
 
-	std::vector<int> v(1024);
+	const int Size=1024;
+	std::vector<int> v(Size);
 	for(auto& i: v) {
 		std::uniform_int_distribution<int> intDis(0, 65536);
 		i = intDis(gen);
 	}
 
 	// TODO: get rid of this requirement.
-	v[1023] = 300;
+	v[Size-1] = 100;
 
 	{
 		auto start = std::chrono::high_resolution_clock::now();

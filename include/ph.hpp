@@ -35,12 +35,45 @@ struct LazyStrIterator {
 	}
 };
 
-template<typename Predicate>
+template<typename Predicate, typename... Predicates>
 struct Until_t {
+
+	template<typename Iterator, typename ConstraintToCheck,
+			bool runOnIterator=std::is_same<
+				typename std::decay<
+					typename boost::mpl::at_c<
+						typename boost::function_types::parameter_types<decltype(&ConstraintToCheck::operator())>
+						,
+						1
+					>::type
+				>::type
+				,
+		//		typename std::decay<typename std::remove_reference<Iterator>::type::value_type>::type
+				decltype(*std::declval<Iterator>())
+			>::value
+	>
+	bool
+	checkPredicate(Iterator it) {
+		return ConstraintToCheck{}(*it);
+	}
+
+	template<typename Iterator, typename ConstraintToCheck, typename... ConstraintsToCheck>
+	bool
+	checkPredicates(Iterator&& it) {
+		return checkPredicate<Iterator, ConstraintToCheck>(it) || checkPredicates<Iterator, ConstraintsToCheck...>(it);
+	}
+
+	template<typename Iterator>
+	bool
+	checkPredicates(Iterator&& it) {
+		return false;
+	}
+
+
 	template<typename Iterator>
 	inline
 	bool operator==(Iterator&& other) {
-		return Predicate{}(*std::forward<Iterator>(other));
+		return checkPredicates<Iterator, Predicate, Predicates...>(std::forward<Iterator>(other));
 	}
 
 	template<typename Iterator>
@@ -49,26 +82,21 @@ struct Until_t {
 		return ! (this->operator==(std::forward<Iterator>(other)));
 	}
 
-	template<typename OtherPredicate>
+	template<typename OtherPredicate, typename... OtherPredicates>
 	inline
 	auto operator||(Until_t<OtherPredicate> other) {
-		using signature = decltype(&OtherPredicate::operator());
 
-		using argumentTypes = typename boost::function_types::parameter_types<signature>;
-
-		const int one = 2;
-		static_assert(boost::mpl::size<argumentTypes>::value == one, "only unary predicates are allowed");
-
-		using value_type = typename boost::mpl::at_c<argumentTypes, 1>::type;
-
-
-		auto lambda = [](value_type v) { return Predicate{}(v) || OtherPredicate{}(v); };
-
-
-		return Until_t<decltype(lambda)>{};
+		return Until_t<Predicate, Predicates..., OtherPredicate, OtherPredicates...>{};
 	}
+/*
+	template<typename RealIterator>
+	inline
+	auto operator||(RealIterator iterator) {
+		auto lambda = [=](const decltype(*iterator)& r) { return r == iterator; };
 
-
+		return (Until_t<decltype(lambda)>{})||(*this);
+	}
+*/
 };
 
 template<typename Predicate>
