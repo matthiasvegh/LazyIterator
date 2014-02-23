@@ -1,5 +1,9 @@
 #ifndef PH_HPP_
 #define PH_HPP_
+
+#include <tuple>
+#include <type_traits>
+
 #include <boost/type_traits/function_traits.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/function_types/parameter_types.hpp>
@@ -24,108 +28,113 @@ struct LazyStrIterator {
 	template<typename Iterator>
 	inline
 	bool operator==(Iterator&& other) {
-
-		return *std::forward<Iterator>(other) == '\0';
+		return *other == '\0';
 	}
 
 	template<typename Iterator>
 	inline
 	bool operator!=(Iterator&& other) {
-		return ! (this->operator==(std::forward<Iterator>(other)));
+		return !(*this == std::forward<Iterator>(other));
 	}
 };
 
 namespace detail {
 
 	template<typename Iterator, typename ConstraintToCheck, bool onValue>
-	struct checkPredicateHelper;
+	struct CheckPredicateHelper;
 
 	template<typename Iterator, typename ConstraintToCheck>
-	struct checkPredicateHelper<Iterator, ConstraintToCheck, true> {
+	struct CheckPredicateHelper<Iterator, ConstraintToCheck, true> {
+
+		CheckPredicateHelper(ConstraintToCheck constraintToCheck) : constraintToCheck(constraintToCheck) {}
 
 		bool operator()(Iterator it) const {
-			return ConstraintToCheck{}(*it);
+			return constraintToCheck(*it);
 		}
+
+		ConstraintToCheck constraintToCheck;
 	};
 
 	template<typename Iterator, typename ConstraintToCheck>
-	struct checkPredicateHelper<Iterator, ConstraintToCheck, false> {
+	struct CheckPredicateHelper<Iterator, ConstraintToCheck, false> {
+
+		CheckPredicateHelper(ConstraintToCheck constraintToCheck) : constraintToCheck(constraintToCheck) {}
 
 		bool operator()(Iterator it) const {
-			return ConstraintToCheck{}(it);
+			return constraintToCheck(it);
 		}
+
+		ConstraintToCheck constraintToCheck;
 	};
 
 } // namespace detail
 
-template<typename Predicate, typename... Predicates>
-struct Until_t {
-
-	template<typename Iterator, typename ConstraintToCheck,
-			bool runOnValue=std::is_same<
-				typename std::decay<
-					typename boost::mpl::at_c<
-						typename boost::function_types::parameter_types<decltype(&ConstraintToCheck::operator())>
-						,
-						1
-					>::type
+template<typename Iterator, typename ConstraintToCheck,
+		bool runOnValue=std::is_same<
+			typename std::decay<
+				typename boost::mpl::at_c<
+					typename boost::function_types::parameter_types<decltype(&ConstraintToCheck::operator())>
+					,
+					1
 				>::type
-				,
-				typename std::decay<decltype(*std::declval<Iterator>())>::type
-			>::value
-	>
-	bool
-	checkPredicate(Iterator it) {
-		return detail::checkPredicateHelper<Iterator, ConstraintToCheck, runOnValue>{}(it);
-	}
+			>::type
+			,
+			typename std::decay<decltype(*std::declval<Iterator>())>::type
+		>::value
+>
+bool checkPredicate(Iterator it, ConstraintToCheck constraint) {
+	return detail::CheckPredicateHelper<Iterator, ConstraintToCheck, runOnValue>{constraint}(it);
+}
 
-	template<typename Iterator, typename ConstraintToCheck, typename... ConstraintsToCheck>
-	bool
-	checkPredicates(Iterator&& it) {
-		return checkPredicate<Iterator, ConstraintToCheck>(it) || checkPredicates<Iterator, ConstraintsToCheck...>(it);
-	}
+template<class Iterator, class T1, std::size_t Index = 0>
+typename std::enable_if<Index >= std::tuple_size<T1>::value, bool>::type checkPredicates(Iterator&& it, const T1& predicates) {
+	return false;
+}
 
-	template<typename Iterator>
-	bool
-	checkPredicates(Iterator&& it) {
-		return false;
-	}
+template<class Iterator, class T1, std::size_t Index = 0>
+typename std::enable_if<Index < std::tuple_size<T1>::value, bool>::type checkPredicates(Iterator&& it, const T1& predicates) {
+	return checkPredicate(it, std::get<Index>(predicates)) || checkPredicates<Iterator, T1, Index+1>(it, predicates);
+}
 
+template<class TupleType>
+struct Until {
+	Until(const TupleType& predicates) : predicates(predicates) {}
 
 	template<typename Iterator>
 	inline
 	bool operator==(Iterator&& other) {
-		return checkPredicates<Iterator, Predicate, Predicates...>(std::forward<Iterator>(other));
+		return checkPredicates(std::forward<Iterator>(other), predicates);
 	}
 
 	template<typename Iterator>
 	inline
 	bool operator!=(Iterator&& other) {
-		return ! (this->operator==(std::forward<Iterator>(other)));
+		return !(*this == std::forward<Iterator>(other));
 	}
 
-	template<typename OtherPredicate, typename... OtherPredicates>
-	inline
-	auto operator||(Until_t<OtherPredicate> other) {
-
-		return Until_t<Predicate, Predicates..., OtherPredicate, OtherPredicates...>{};
-	}
-
-	template<typename RealIterator>
-	inline
-	auto operator||(RealIterator iterator) {
-		auto lambda = [=](RealIterator it) { return it == iterator; };
-		return Until_t<Predicate, Predicates..., decltype(lambda)>{};
-	}
-
+	TupleType predicates;
 };
 
+template<class T1, class T2>
+auto concatUntils(const Until<T1>& t1, const Until<T2>& t2) {
+	return Until<decltype(std::tuple_cat(t1.predicates, t2.predicates))>{std::tuple_cat(t1.predicates, t2.predicates)};
+}
+
+template<class T1, class T2>
+inline
+auto operator||(const Until<T1>& t1, const Until<T2>& t2) {
+	return concatUntils(t1, t2);
+}
+
+template<class T1, typename RealIterator>
+inline
+auto operator||(const Until<T1>& t1, RealIterator iterator) {
+	auto lambda = [=](RealIterator it) { return it == iterator; };
+	return concatUntils(t1, Until<decltype(lambda)>(lambda));
+}
+
 template<typename Predicate>
-Until_t<Predicate> Until(Predicate&& p) { return Until_t<Predicate>{}; }
-
-
-
-
+auto until(Predicate&& p) { return Until<std::tuple<Predicate>>{std::make_tuple(p)}; }
 
 } // namespace ph
 

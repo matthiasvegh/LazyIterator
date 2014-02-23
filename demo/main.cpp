@@ -52,20 +52,20 @@ int main() {
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 
-		auto endIterator = ph::Until([](const char& c) { return c=='A'; });
+		auto endIterator = ph::until([](const char& c) { return c=='A'; });
 
 		auto pos = ph::find(str, endIterator, 'a');
 
 		auto end = std::chrono::high_resolution_clock::now();
 
-		std::cout<< "ph::find with Until: " << (end-start).count() << std::endl;
+		std::cout<< "ph::find with until: " << (end-start).count() << std::endl;
 	}
 
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 
-		auto endIterator1 = ph::Until([](const char& c) { return c=='A'; });
-		auto endIterator2 = ph::Until([](const char& c) { return c=='B'; });
+		auto endIterator1 = ph::until([](const char& c) { return c=='A'; });
+		auto endIterator2 = ph::until([](const char& c) { return c=='B'; });
 
 		auto pos = ph::find(str, endIterator1 || endIterator2, 'a');
 
@@ -112,8 +112,8 @@ int main() {
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 
-		auto endIterator1 = ph::Until([](const int& i) { return i==100; });
-		auto endIterator2 = ph::Until([](const int& i) { return i==200; });
+		auto endIterator1 = ph::until([](const int& i) { return i==100; });
+		auto endIterator2 = ph::until([](const int& i) { return i==200; });
 
 		auto endIterator = endIterator1 || endIterator2;
 
