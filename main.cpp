@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iterator>
 #include <chrono>
 #include <random>
@@ -82,12 +83,13 @@ int main() {
 	}
 
 	// TODO: get rid of this requirement.
-	v[1023] = 200;
+	v[1023] = 300;
 
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 
-		for(auto it = v.begin(); it != v.end(); ++it) {
+		auto it = v.begin();
+		for(; it != v.end(); ++it) {
 			if(*it == 200)
 				break;
 			if(*it == 100)
@@ -95,6 +97,12 @@ int main() {
 			if(*it == 300)
 				break;
 		}
+
+		assert(it != v.end());
+
+		const auto value = *it;
+
+		assert(value == 200 || value == 100 || value == 300);
 
 		auto end = std::chrono::high_resolution_clock::now();
 		std::cout << "vectorFind: " << (end - start).count() << std::endl;
@@ -109,7 +117,12 @@ int main() {
 
 		auto endIterator = endIterator1 && endIterator2;
 
-		ph::find(v.begin(), endIterator, 300);
+		auto it = ph::find(v.begin(), endIterator, 300);
+
+		assert(it != v.end());
+
+		const auto value = *it;
+		assert(value == 200 || value == 100 || value == 300);
 
 		auto end = std::chrono::high_resolution_clock::now();
 		std::cout << "phFind: " << (end - start).count() << std::endl;
