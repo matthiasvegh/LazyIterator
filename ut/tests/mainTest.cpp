@@ -22,5 +22,12 @@ BOOST_AUTO_TEST_CASE(Find_With_LazyStrIterator_should_behave_as_if_using_strlen)
 
 }
 
+BOOST_AUTO_TEST_CASE(LazyStrIterator_should_compare_equal_to_an_iterator_pointing_to_NULL) {
+	const char* c = "\0";
+
+	BOOST_CHECK(ph::LazyStrIterator{} == c);
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
