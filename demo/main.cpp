@@ -75,10 +75,10 @@ int main() {
 	}
 
 
-	const int Size=4096;
+	const int Size=6400000;
 	std::vector<int> v(Size);
 	for(auto& i: v) {
-		std::uniform_int_distribution<int> intDis(0, 65536);
+		std::uniform_int_distribution<int> intDis(0, Size/2);
 		i = intDis(gen);
 	}
 
