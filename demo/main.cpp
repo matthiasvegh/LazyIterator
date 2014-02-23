@@ -129,6 +129,24 @@ int main() {
 
 	}
 
+	{
+		auto start = std::chrono::high_resolution_clock::now();
+
+
+		auto endIterator = ph::untilValue(100, 200);
+
+		auto it = ph::find(v.begin(), endIterator || v.end(), 300);
+
+		assert(it != v.end());
+
+		const auto value = *it;
+		assert(value == until1 || value == until2 || value == 300);
+
+		auto end = std::chrono::high_resolution_clock::now();
+		std::cout << "multiVal phFind: " << (end - start).count() << std::endl;
+
+	}
+
 }
 
 

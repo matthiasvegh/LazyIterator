@@ -67,6 +67,16 @@ namespace detail {
 		ConstraintToCheck constraintToCheck;
 	};
 
+	template<typename ValueType>
+	bool isElementOf(const ValueType& l, const ValueType& r) {
+		return l == r;
+	}
+
+	template<typename ValueType, typename... ValueTypes>
+	bool isElementOf(const ValueType& l, const ValueType& r, const ValueTypes&... os) {
+		return l == r || isElementOf(l, os...);
+	}
+
 } // namespace detail
 
 template<typename Iterator, typename ConstraintToCheck,
@@ -137,6 +147,12 @@ auto operator||(const Until<T1>& t1, RealIterator iterator) {
 
 template<typename Predicate>
 auto until(Predicate&& p) { return Until<std::tuple<Predicate>>{std::make_tuple(p)}; }
+
+template<typename ValueType, typename... ValueTypes>
+auto untilValue(ValueType vt, ValueTypes... vts) {
+	auto lambda = [=](const ValueType& v) { return detail::isElementOf(v, vt, vts...); };
+	return Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda)));
+}
 
 } // namespace ph
 

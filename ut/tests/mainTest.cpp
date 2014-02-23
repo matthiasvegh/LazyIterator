@@ -107,5 +107,23 @@ BOOST_AUTO_TEST_CASE(Using_find_until_should_work_if_until_predicates_are_runtim
 	BOOST_CHECK_EQUAL(*posPh, *posStl);
 }
 
+BOOST_AUTO_TEST_CASE(Using_find_with_until_vals_should_work_as_if_many_untils_were_composed) {
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+	v.push_back(4);
+	v.push_back(5);
+
+	auto iterator1 = ph::until([](const int& i) { return i == 3; });
+	auto iterator2 = ph::until([](const int& i) { return i == 4; });
+	auto iterator3 = ph::until([](const int& i) { return i == 5; });
+
+	auto posComposite = ph::find(v.begin(), iterator1 || iterator2 || iterator3, 6);
+	auto posUntilVal = ph::find(v.begin(), ph::untilValue(3, 4, 5), 6);
+
+	BOOST_CHECK(posComposite == posUntilVal);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
