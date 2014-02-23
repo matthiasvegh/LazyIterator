@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iterator>
 #include <chrono>
 #include <random>
@@ -72,6 +73,60 @@ int main() {
 		auto end = std::chrono::high_resolution_clock::now();
 
 		std::cout<< "ph::find with two untils: " << (end-start).count() << std::endl;
+	}
+
+
+	std::vector<int> v(1024);
+	for(auto& i: v) {
+		std::uniform_int_distribution<int> intDis(0, 65536);
+		i = intDis(gen);
+	}
+
+	// TODO: get rid of this requirement.
+	v[1023] = 300;
+
+	{
+		auto start = std::chrono::high_resolution_clock::now();
+
+		auto it = v.begin();
+		for(; it != v.end(); ++it) {
+			if(*it == 200)
+				break;
+			if(*it == 100)
+				break;
+			if(*it == 300)
+				break;
+		}
+
+		assert(it != v.end());
+
+		const auto value = *it;
+
+		assert(value == 200 || value == 100 || value == 300);
+
+		auto end = std::chrono::high_resolution_clock::now();
+		std::cout << "vectorFind: " << (end - start).count() << std::endl;
+
+	}
+
+	{
+		auto start = std::chrono::high_resolution_clock::now();
+
+		auto endIterator1 = ph::Until([](const int& i) { return i==100; });
+		auto endIterator2 = ph::Until([](const int& i) { return i==200; });
+
+		auto endIterator = endIterator1 && endIterator2;
+
+		auto it = ph::find(v.begin(), endIterator, 300);
+
+		assert(it != v.end());
+
+		const auto value = *it;
+		assert(value == 200 || value == 100 || value == 300);
+
+		auto end = std::chrono::high_resolution_clock::now();
+		std::cout << "phFind: " << (end - start).count() << std::endl;
+
 	}
 
 }
