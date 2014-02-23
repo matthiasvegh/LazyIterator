@@ -36,37 +36,37 @@ BOOST_AUTO_TEST_CASE(LazyStrIterator_should_not_compare_equal_to_an_iterator_not
 
 }
 
-BOOST_AUTO_TEST_CASE(Until_with_value_predicate_should_compare_equal_to_iterator_pointing_to_that_value) {
+BOOST_AUTO_TEST_CASE(until_with_value_predicate_should_compare_equal_to_iterator_pointing_to_that_value) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(2);
 	v.push_back(3);
 
-	auto iterator = ph::Until([](const int& i) { return i == 2; });
+	auto iterator = ph::until([](const int& i) { return i == 2; });
 
 	BOOST_CHECK(iterator == ++(v.begin()));
 }
 
-BOOST_AUTO_TEST_CASE(Until_with_value_predicate_should_not_compare_equal_to_iterator_not_pointing_to_that_value) {
+BOOST_AUTO_TEST_CASE(until_with_value_predicate_should_not_compare_equal_to_iterator_not_pointing_to_that_value) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(2);
 	v.push_back(3);
 
-	auto iterator = ph::Until([](const int& i) { return i == 5; });
+	auto iterator = ph::until([](const int& i) { return i == 5; });
 
 	BOOST_CHECK(iterator != ++(v.begin()));
 }
 
-BOOST_AUTO_TEST_CASE(When_Untils_are_composed_find_should_stop_when_any_of_them_compare_equal) {
+BOOST_AUTO_TEST_CASE(When_untils_are_composed_find_should_stop_when_any_of_them_compare_equal) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(2);
 	v.push_back(3);
 	v.push_back(4);
 
-	auto iterator1 = ph::Until([](const int& i) { return i == 3; });
-	auto iterator2 = ph::Until([](const int& i) { return i == 4; });
+	auto iterator1 = ph::until([](const int& i) { return i == 3; });
+	auto iterator2 = ph::until([](const int& i) { return i == 4; });
 
 	auto pos = ph::find(v.begin(), iterator1 || iterator2, 5);
 
@@ -81,8 +81,8 @@ BOOST_AUTO_TEST_CASE(Using_find_until_composition_should_be_commutative) {
 	v.push_back(3);
 	v.push_back(4);
 
-	auto iterator1 = ph::Until([](const int& i) { return i == 3; });
-	auto iterator2 = ph::Until([](const int& i) { return i == 4; });
+	auto iterator1 = ph::until([](const int& i) { return i == 3; });
+	auto iterator2 = ph::until([](const int& i) { return i == 4; });
 
 	auto pos1 = ph::find(v.begin(), iterator1 || iterator2, 5);
 	auto pos2 = ph::find(v.begin(), iterator2 || iterator1, 5);
