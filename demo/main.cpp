@@ -68,7 +68,7 @@ int main() {
 		auto endIterator1 = ph::Until([](const char& c) { return c=='A'; });
 		auto endIterator2 = ph::Until([](const char& c) { return c=='B'; });
 
-		auto pos = ph::find(str, endIterator1 && endIterator2, 'a');
+		auto pos = ph::find(str, endIterator1 || endIterator2, 'a');
 
 		auto end = std::chrono::high_resolution_clock::now();
 
@@ -115,7 +115,7 @@ int main() {
 		auto endIterator1 = ph::Until([](const int& i) { return i==100; });
 		auto endIterator2 = ph::Until([](const int& i) { return i==200; });
 
-		auto endIterator = endIterator1 && endIterator2;
+		auto endIterator = endIterator1 || endIterator2;
 
 		auto it = ph::find(v.begin(), endIterator, 300);
 

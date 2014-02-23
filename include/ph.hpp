@@ -51,7 +51,7 @@ struct Until_t {
 
 	template<typename OtherPredicate>
 	inline
-	auto operator&&(Until_t<OtherPredicate> other) {
+	auto operator||(Until_t<OtherPredicate> other) {
 		using signature = decltype(&OtherPredicate::operator());
 
 		using argumentTypes = typename boost::function_types::parameter_types<signature>;
@@ -62,7 +62,7 @@ struct Until_t {
 		using value_type = typename boost::mpl::at_c<argumentTypes, 1>::type;
 
 
-		auto lambda = [](value_type v) { return Predicate{}(v) && OtherPredicate{}(v); };
+		auto lambda = [](value_type v) { return Predicate{}(v) || OtherPredicate{}(v); };
 
 
 		return Until_t<decltype(lambda)>{};
