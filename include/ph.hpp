@@ -35,11 +35,34 @@ struct LazyStrIterator {
 	}
 };
 
+namespace detail {
+
+	template<typename Iterator, typename ConstraintToCheck, bool onValue>
+	struct checkPredicateHelper;
+
+	template<typename Iterator, typename ConstraintToCheck>
+	struct checkPredicateHelper<Iterator, ConstraintToCheck, true> {
+
+		bool operator()(Iterator it) const {
+			return ConstraintToCheck{}(*it);
+		}
+	};
+
+	template<typename Iterator, typename ConstraintToCheck>
+	struct checkPredicateHelper<Iterator, ConstraintToCheck, false> {
+
+		bool operator()(Iterator it) const {
+			return ConstraintToCheck{}(it);
+		}
+	};
+
+} // namespace detail
+
 template<typename Predicate, typename... Predicates>
 struct Until_t {
 
 	template<typename Iterator, typename ConstraintToCheck,
-			bool runOnIterator=std::is_same<
+			bool runOnValue=std::is_same<
 				typename std::decay<
 					typename boost::mpl::at_c<
 						typename boost::function_types::parameter_types<decltype(&ConstraintToCheck::operator())>
@@ -48,12 +71,12 @@ struct Until_t {
 					>::type
 				>::type
 				,
-				decltype(*std::declval<Iterator>())
+				typename std::decay<decltype(*std::declval<Iterator>())>::type
 			>::value
 	>
 	bool
 	checkPredicate(Iterator it) {
-		return ConstraintToCheck{}(*it);
+		return detail::checkPredicateHelper<Iterator, ConstraintToCheck, runOnValue>{}(it);
 	}
 
 	template<typename Iterator, typename ConstraintToCheck, typename... ConstraintsToCheck>
@@ -87,15 +110,14 @@ struct Until_t {
 
 		return Until_t<Predicate, Predicates..., OtherPredicate, OtherPredicates...>{};
 	}
-/*
+
 	template<typename RealIterator>
 	inline
 	auto operator||(RealIterator iterator) {
-		auto lambda = [=](const decltype(*iterator)& r) { return r == iterator; };
-
-		return (Until_t<decltype(lambda)>{})||(*this);
+		auto lambda = [=](RealIterator it) { return it == iterator; };
+		return Until_t<Predicate, Predicates..., decltype(lambda)>{};
 	}
-*/
+
 };
 
 template<typename Predicate>
