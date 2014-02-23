@@ -1,0 +1,9 @@
+
+.gitignore
+
+ROOT_DIR = $(TUP_CWD)
+INCLUDE_DIR = $(ROOT_DIR)/include
+
+!cxx = |> clang++ -O3 --std=c++1y -I$(INCLUDE_DIR) -c %f -o %o |> %B.o
+!ld = |> clang++ %f -o %o |>
+
