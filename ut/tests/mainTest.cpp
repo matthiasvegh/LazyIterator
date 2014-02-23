@@ -29,5 +29,34 @@ BOOST_AUTO_TEST_CASE(LazyStrIterator_should_compare_equal_to_an_iterator_pointin
 
 }
 
+BOOST_AUTO_TEST_CASE(LazyStrIterator_should_not_compare_equal_to_an_iterator_not_pointing_to_NULL) {
+	const char* c = "a";
+
+	BOOST_CHECK(ph::LazyStrIterator{} != c);
+
+}
+
+BOOST_AUTO_TEST_CASE(Until_with_value_predicate_should_compare_equal_to_iterator_pointing_to_that_value) {
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+
+	auto iterator = ph::Until([](const int& i) { return i == 2; });
+
+	BOOST_CHECK(iterator == ++(v.begin()));
+}
+
+BOOST_AUTO_TEST_CASE(Until_with_value_predicate_should_not_compare_equal_to_iterator_not_pointing_to_that_value) {
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+
+	auto iterator = ph::Until([](const int& i) { return i == 5; });
+
+	BOOST_CHECK(iterator != ++(v.begin()));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
