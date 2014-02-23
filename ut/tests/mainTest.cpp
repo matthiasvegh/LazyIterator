@@ -91,5 +91,21 @@ BOOST_AUTO_TEST_CASE(Using_find_until_composition_should_be_commutative) {
 
 }
 
+BOOST_AUTO_TEST_CASE(Using_find_until_should_work_if_until_predicates_are_runtime) {
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+	v.push_back(4);
+
+	const volatile int delimiter = 3;
+	auto iterator = ph::until([=](const int& i) { return i == delimiter; });
+
+	auto posPh = ph::find(v.begin(), iterator, 4);
+	auto posStl = std::find(v.begin(), v.begin()+2, 4);
+
+	BOOST_CHECK_EQUAL(*posPh, *posStl);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 

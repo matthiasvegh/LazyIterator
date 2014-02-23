@@ -75,24 +75,24 @@ int main() {
 	}
 
 
-	const int Size=1024;
+	const int Size=4096;
 	std::vector<int> v(Size);
 	for(auto& i: v) {
 		std::uniform_int_distribution<int> intDis(0, 65536);
 		i = intDis(gen);
 	}
 
-	// TODO: get rid of this requirement.
-	v[Size-1] = 100;
+	const volatile int until1 = 100;
+	const volatile int until2 = 200;
 
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 
 		auto it = v.begin();
 		for(; it != v.end(); ++it) {
-			if(*it == 200)
+			if(*it == until1)
 				break;
-			if(*it == 100)
+			if(*it == until2)
 				break;
 			if(*it == 300)
 				break;
@@ -102,7 +102,7 @@ int main() {
 
 		const auto value = *it;
 
-		assert(value == 200 || value == 100 || value == 300);
+		assert(value == until1 || value == until2 || value == 300);
 
 		auto end = std::chrono::high_resolution_clock::now();
 		std::cout << "vectorFind: " << (end - start).count() << std::endl;
@@ -112,8 +112,8 @@ int main() {
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 
-		auto endIterator1 = ph::until([](const int& i) { return i==100; });
-		auto endIterator2 = ph::until([](const int& i) { return i==200; });
+		auto endIterator1 = ph::until([until1](const int& i) { return i==until1; });
+		auto endIterator2 = ph::until([until2](const int& i) { return i==until2; });
 
 		auto endIterator = endIterator1 || endIterator2;
 
@@ -122,7 +122,7 @@ int main() {
 		assert(it != v.end());
 
 		const auto value = *it;
-		assert(value == 200 || value == 100 || value == 300);
+		assert(value == until1 || value == until2 || value == 300);
 
 		auto end = std::chrono::high_resolution_clock::now();
 		std::cout << "phFind: " << (end - start).count() << std::endl;
