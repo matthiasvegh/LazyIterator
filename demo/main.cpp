@@ -82,8 +82,8 @@ int main() {
 		i = intDis(gen);
 	}
 
-	const volatile int until1 = 100;
-	const volatile int until2 = 200;
+	const int until1 = 100;
+	const int until2 = 200;
 
 	{
 		auto start = std::chrono::high_resolution_clock::now();
