@@ -133,7 +133,7 @@ int main() {
 		auto start = std::chrono::high_resolution_clock::now();
 
 
-		auto endIterator = ph::untilValue(100, 200);
+		auto endIterator = ph::untilValue({100, 200});
 
 		auto it = ph::find(v.begin(), endIterator || v.end(), 300);
 
