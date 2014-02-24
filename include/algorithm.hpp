@@ -56,18 +56,6 @@ Begin none_of(Begin begin, End end, UnaryPredicate p) {
 	return ph::find_if(begin, end, p) == end;
 }
 
-template<typename Begin, typename End>
-Begin max_element(Begin begin, End end) {
-	Begin answerIterator = begin++;
-
-	for(; end != begin; ++begin) {
-		if(*begin > *answerIterator)
-			answerIterator = begin;
-	}
-
-	return answerIterator;
-}
-
 template<typename Begin, typename End, class UnaryFunction>
 UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
 	for (; end != begin; ++begin) {
@@ -79,12 +67,50 @@ UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
 template<class Begin, class End, class T>
 std::size_t count(Begin begin, End end, const T& value) {
 	std::size_t ret = 0;
-    for (; end != begin; ++begin) {
-        if (*begin == value) {
-            ret++;
-        }
-    }
-    return ret;
+	for (; end != begin; ++begin) {
+		if (*begin == value) {
+			++ret;
+		}
+	}
+	return ret;
+}
+
+template<class Begin, class End, class UnaryPredicate>
+std::size_t count_if(Begin begin, End end, UnaryPredicate p) {
+	std::size_t ret = 0;
+	for (; end != begin; ++begin) {
+		if (p(*begin)) {
+			++ret;
+		}
+	}
+	return ret;
+}
+
+// TODO: mismatch, and all its overloads.
+
+// TODO: equal and all its overloads.
+
+// TODO: find_end and all its overloads.
+
+// TODO: find_first_of and all its overloads.
+
+// TODO: adjacent_find and all its overloads.
+
+// TODO: search(_n) all their overloads.
+
+
+// TODO: Other operation categories.
+
+template<typename Begin, typename End>
+Begin max_element(Begin begin, End end) {
+	Begin answerIterator = begin++;
+
+	for(; end != begin; ++begin) {
+		if(*begin > *answerIterator)
+			answerIterator = begin;
+	}
+
+	return answerIterator;
 }
 
 } // namespace ph
