@@ -217,5 +217,41 @@ BOOST_AUTO_TEST_CASE(Until_count_should_not_run_over_an_arbitrary_real_iterator_
 	BOOST_CHECK_EQUAL(count, 2);
 }
 
+BOOST_AUTO_TEST_CASE(Until_find_should_not_overstep_the_end_iterator_if_it_is_given_and_neither_value_nor_delimiter_is_found)
+{
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(1);
+	v.push_back(1);
+	v.push_back(1);
+	v.push_back(1);
+
+	auto endIterator = ph::until([](const int&){ return false; });
+
+	auto posPh = ph::find(v.begin(), endIterator || v.end(), 2);
+	auto posStl = std::find(v.begin(), v.end(), 2);
+
+	BOOST_CHECK(posPh == posStl);
+
+}
+
+BOOST_AUTO_TEST_CASE(Until_count_should_not_overstep_the_end_iterator_if_it_is_given_and_neither_value_nor_delimiter_is_found)
+{
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(1);
+	v.push_back(1);
+	v.push_back(1);
+	v.push_back(1);
+
+	auto endIterator = ph::until([](const int&){ return false; });
+
+	auto countPh = ph::count(v.begin(), endIterator || v.end(), 2);
+	auto countStl = std::count(v.begin(), v.end(), 2);
+
+	BOOST_CHECK_EQUAL(countPh, countStl);
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
