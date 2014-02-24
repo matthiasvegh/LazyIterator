@@ -183,5 +183,39 @@ BOOST_AUTO_TEST_CASE(Until_count_should_count_matching_elements_before_delimiter
 	BOOST_CHECK_EQUAL(count, 2);
 }
 
+BOOST_AUTO_TEST_CASE(Until_count_should_not_run_over_the_end_if_the_delimiter_is_not_found)
+{
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(1);
+	v.push_back(3);
+	v.push_back(4);
+	v.push_back(1);
+	v.push_back(1);
+
+	auto endIterator = ph::until([](const int& i) { return i==8; });
+
+
+	auto count = ph::count(v.begin(), endIterator || v.end(), 1);
+	BOOST_CHECK_EQUAL(count, 4);
+}
+
+BOOST_AUTO_TEST_CASE(Until_count_should_not_run_over_an_arbitrary_real_iterator_if_the_delimiter_is_not_found)
+{
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(1);
+	v.push_back(3);
+	v.push_back(4);
+	v.push_back(1);
+	v.push_back(1);
+
+	auto endIterator = ph::until([](const int& i) { return i==8; });
+
+
+	auto count = ph::count(v.begin(), endIterator || (v.begin() + 4), 1);
+	BOOST_CHECK_EQUAL(count, 2);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
