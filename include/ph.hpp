@@ -24,6 +24,18 @@ Begin find(Begin begin, End end, const ValueType& value) {
 	return begin;
 }
 
+template<typename Begin, typename End>
+Begin max_element(Begin begin, End end) {
+	Begin answerIterator = begin++;
+
+	for(; end != begin; ++begin) {
+		if(*begin > *answerIterator)
+			answerIterator = begin;
+	}
+
+	return answerIterator;
+}
+
 struct LazyStrIterator {
 	template<typename Iterator>
 	inline

@@ -125,5 +125,21 @@ BOOST_AUTO_TEST_CASE(Using_find_with_until_vals_should_work_as_if_many_untils_we
 	BOOST_CHECK(posComposite == posUntilVal);
 }
 
+BOOST_AUTO_TEST_CASE(Using_max_element_should_find_largest_element_before_delimiter)
+{
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+
+	auto endIterator = ph::until([](const int& i) { return i==3; });
+
+	auto maxPosPh = ph::max_element(v.begin(), endIterator);
+
+	auto maxPosStl = std::max_element(v.begin(), v.begin()+2);
+
+	BOOST_CHECK(maxPosPh == maxPosStl);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
