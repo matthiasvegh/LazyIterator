@@ -11,6 +11,8 @@
 
 namespace ph {
 
+// Non-modifying sequence operations.
+
 template<typename Begin, typename End, typename ValueType>
 Begin find(Begin begin, End end, const ValueType& value) {
 	for(; end != begin; ++begin) {
@@ -19,6 +21,39 @@ Begin find(Begin begin, End end, const ValueType& value) {
 		}
 	}
 	return begin;
+}
+
+template<typename Begin, typename End, typename UnaryPredicate>
+Begin find_if(Begin begin, End end, UnaryPredicate p) {
+	for(; end != begin; ++begin) {
+		if(p(*begin))
+			return begin;
+	}
+	return begin;
+}
+
+template<typename Begin, typename End, typename UnaryPredicate>
+Begin find_if_not(Begin begin, End end, UnaryPredicate q) {
+	for(; end != begin; ++begin) {
+		if(!q(*begin))
+			return begin;
+	}
+	return begin;
+}
+
+template<typename Begin, typename End, typename UnaryPredicate>
+bool all_of(Begin begin, End end, UnaryPredicate p) {
+	return ph::find_if_not(begin, end, p) == end;
+}
+
+template<typename Begin, typename End, typename UnaryPredicate>
+Begin any_of(Begin begin, End end, UnaryPredicate p) {
+	return ph::find_if(begin, end, p) != end;
+}
+
+template<typename Begin, typename End, typename UnaryPredicate>
+Begin none_of(Begin begin, End end, UnaryPredicate p) {
+	return ph::find_if(begin, end, p) == end;
 }
 
 template<typename Begin, typename End>
