@@ -2,7 +2,6 @@
 #define PH_HPP_
 
 #include <tuple>
-#include <algorithm>
 #include <type_traits>
 #include <initializer_list>
 
@@ -13,50 +12,10 @@
 #include <boost/function_types/parameter_types.hpp>
 #include <boost/function_types/function_arity.hpp>
 #include <boost/mpl/size.hpp>
+#include "detail.hpp"
+
 
 namespace ph {
-
-template<typename Begin, typename End, typename ValueType>
-Begin find(Begin begin, End end, const ValueType& value) {
-	for(; end != begin; ++begin) {
-		if(*begin == value) {
-			return begin;
-		}
-	}
-	return begin;
-}
-
-template<typename Begin, typename End>
-Begin max_element(Begin begin, End end) {
-	Begin answerIterator = begin++;
-
-	for(; end != begin; ++begin) {
-		if(*begin > *answerIterator)
-			answerIterator = begin;
-	}
-
-	return answerIterator;
-}
-
-template<typename Begin, typename End, class UnaryFunction>
-UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
-	for (; end != begin; ++begin) {
-		f(*begin);
-	}
-	return f;
-}
-
-template<class Begin, class End, class T>
-std::size_t count(Begin begin, End end, const T& value)
-{
-	std::size_t ret = 0;
-    for (; end != begin; ++begin) {
-        if (*begin == value) {
-            ret++;
-        }
-    }
-    return ret;
-}
 
 struct LazyStrIterator {
 	template<typename Iterator>
@@ -72,46 +31,6 @@ struct LazyStrIterator {
 	}
 };
 
-namespace detail {
-
-	template<typename Iterator, typename ConstraintToCheck, bool onValue>
-	struct CheckPredicateHelper;
-
-	template<typename Iterator, typename ConstraintToCheck>
-	struct CheckPredicateHelper<Iterator, ConstraintToCheck, true> {
-
-		CheckPredicateHelper(ConstraintToCheck constraintToCheck) : constraintToCheck(constraintToCheck) {}
-
-		bool operator()(Iterator it) const {
-			return constraintToCheck(*it);
-		}
-
-		ConstraintToCheck constraintToCheck;
-	};
-
-	template<typename Iterator, typename ConstraintToCheck>
-	struct CheckPredicateHelper<Iterator, ConstraintToCheck, false> {
-
-		CheckPredicateHelper(ConstraintToCheck constraintToCheck) : constraintToCheck(constraintToCheck) {}
-
-		bool operator()(Iterator it) const {
-			return constraintToCheck(it);
-		}
-
-		ConstraintToCheck constraintToCheck;
-	};
-
-	template<typename ValueType>
-	bool isElementOf(const ValueType& l, const ValueType& r) {
-		return l == r;
-	}
-
-	template<typename ValueType, typename... ValueTypes>
-	bool isElementOf(const ValueType& l, const ValueType& r, const ValueTypes&... os) {
-		return l == r || isElementOf(l, os...);
-	}
-
-} // namespace detail
 
 template<typename Iterator, typename ConstraintToCheck,
 		bool runOnValue=std::is_same<
