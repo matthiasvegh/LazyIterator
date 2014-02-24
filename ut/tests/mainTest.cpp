@@ -165,5 +165,22 @@ BOOST_AUTO_TEST_CASE(Until_for_each_should_visit_all_elements_before_delimiter)
 	BOOST_CHECK_EQUAL(visitedInts[3], 4);
 }
 
+BOOST_AUTO_TEST_CASE(Until_count_should_count_matching_elements_before_delimiter)
+{
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(1);
+	v.push_back(3);
+	v.push_back(4);
+	v.push_back(1);
+	v.push_back(1);
+
+	auto endIterator = ph::until([](const int& i) { return i==4; });
+
+
+	auto count = ph::count(v.begin(), endIterator, 1);
+	BOOST_CHECK_EQUAL(count, 2);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 

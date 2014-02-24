@@ -44,6 +44,18 @@ UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
 	return f;
 }
 
+template<class Begin, class End, class T>
+std::size_t count(Begin begin, End end, const T& value)
+{
+	std::size_t ret = 0;
+    for (; end != begin; ++begin) {
+        if (*begin == value) {
+            ret++;
+        }
+    }
+    return ret;
+}
+
 struct LazyStrIterator {
 	template<typename Iterator>
 	inline
