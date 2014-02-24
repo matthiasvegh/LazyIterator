@@ -2,7 +2,9 @@
 #define PH_HPP_
 
 #include <tuple>
+#include <algorithm>
 #include <type_traits>
+#include <initializer_list>
 
 #include <boost/type_traits/function_traits.hpp>
 #include <boost/type_traits.hpp>
@@ -180,10 +182,22 @@ auto operator||(const Until<T1>& t1, RealIterator iterator) {
 template<typename Predicate>
 auto until(Predicate&& p) { return Until<std::tuple<Predicate>>{std::make_tuple(p)}; }
 
-template<typename ValueType, typename... ValueTypes>
-auto untilValue(ValueType vt, ValueTypes... vts) {
-	auto lambda = [=](const ValueType& v) { return detail::isElementOf(v, vt, vts...); };
+template<typename Range>
+auto untilValue(const Range& vts) {
+	auto lambda = [=](const typename Range::value_type& v) {
+		for ( const auto& x : vts ) {
+			if ( v == x ) {
+				return true;
+			}
+		}
+		return false;
+	};
 	return Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda)));
+}
+
+template<class Value>
+auto untilValue(std::initializer_list<Value> vts) {
+	return untilValue<std::initializer_list<Value>>(vts);
 }
 
 } // namespace ph
