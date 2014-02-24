@@ -36,6 +36,14 @@ Begin max_element(Begin begin, End end) {
 	return answerIterator;
 }
 
+template<typename Begin, typename End, class UnaryFunction>
+UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
+	for (; end != begin; ++begin) {
+		f(*begin);
+	}
+	return f;
+}
+
 struct LazyStrIterator {
 	template<typename Iterator>
 	inline

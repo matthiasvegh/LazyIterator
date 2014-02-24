@@ -141,5 +141,29 @@ BOOST_AUTO_TEST_CASE(Using_max_element_should_find_largest_element_before_delimi
 	BOOST_CHECK(maxPosPh == maxPosStl);
 }
 
+BOOST_AUTO_TEST_CASE(Until_for_each_should_visit_all_elements_before_delimiter)
+{
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+	v.push_back(4);
+	v.push_back(5);
+
+	auto endIterator = ph::until([](const int& i) { return i==5; });
+
+	std::vector<int> visitedInts;
+
+	auto maxPosPh = ph::for_each(v.begin(), endIterator, [&visitedInts](const int& i) {
+			visitedInts.push_back(i);
+	});
+
+	BOOST_REQUIRE_EQUAL(visitedInts.size(), 4);
+	BOOST_CHECK_EQUAL(visitedInts[0], 1);
+	BOOST_CHECK_EQUAL(visitedInts[1], 2);
+	BOOST_CHECK_EQUAL(visitedInts[2], 3);
+	BOOST_CHECK_EQUAL(visitedInts[3], 4);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
