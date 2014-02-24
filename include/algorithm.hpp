@@ -1,6 +1,14 @@
 #ifndef ALGORITHM_HPP_
 #define ALGORITHM_HPP_
 
+// The below algorithms are ports from
+// http://en.cppreference.com/w/cpp/header/algorithm
+//
+// The main changes to them are that instead of requiring a single iterator
+// type for both the begin and the end iterator, the simply require that the
+// begin be a forward iterator, and that begin is comparable to end.
+
+
 namespace ph {
 
 template<typename Begin, typename End, typename ValueType>
