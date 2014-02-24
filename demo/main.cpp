@@ -147,6 +147,31 @@ int main() {
 
 	}
 
+	{
+		auto start = std::chrono::high_resolution_clock::now();
+
+		auto endIterator = std::find(v.begin(), v.end(), until1);
+
+		auto count = std::count(v.begin(), endIterator, until2);
+
+
+		auto end = std::chrono::high_resolution_clock::now();
+		std::cout << "std::count until until1: " << (end - start).count() << std::endl;
+
+	}
+
+	{
+		auto start = std::chrono::high_resolution_clock::now();
+
+		auto endIterator = ph::until([until1](const int& i) { return i==until1; });
+
+		auto count = ph::count(v.begin(), endIterator, until2);
+
+		auto end = std::chrono::high_resolution_clock::now();
+		std::cout << "phFind until until1: " << (end - start).count() << std::endl;
+
+	}
+
 }
 
 
