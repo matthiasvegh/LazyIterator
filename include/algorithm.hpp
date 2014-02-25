@@ -125,6 +125,30 @@ Begin max_element(Begin begin, End end, Comp comp) {
 	return answerIterator;
 }
 
+template<typename Begin, typename End>
+Begin min_element(Begin begin, End end) {
+	Begin answerIterator = begin++;
+
+	for(; end != begin; ++begin) {
+		if(*begin < *answerIterator)
+			answerIterator = begin;
+	}
+
+	return answerIterator;
+}
+
+template<typename Begin, typename End, typename Comp>
+Begin min_element(Begin begin, End end, Comp comp) {
+	Begin answerIterator = begin++;
+
+	for(; end != begin; ++begin) {
+		if(comp(*begin, *answerIterator))
+			answerIterator = begin;
+	}
+
+	return answerIterator;
+}
+
 } // namespace ph
 
 #endif /* ALGORITHM_HPP_ */
