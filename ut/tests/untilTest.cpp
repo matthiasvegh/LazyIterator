@@ -99,8 +99,7 @@ BOOST_AUTO_TEST_CASE(Using_find_with_until_vals_should_work_as_if_many_untils_we
 	BOOST_CHECK(posComposite == posUntilVal);
 }
 
-BOOST_AUTO_TEST_CASE(Using_max_element_should_find_largest_element_before_delimiter)
-{
+BOOST_AUTO_TEST_CASE(Using_max_element_should_find_largest_element_before_delimiter) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(2);
@@ -115,8 +114,7 @@ BOOST_AUTO_TEST_CASE(Using_max_element_should_find_largest_element_before_delimi
 	BOOST_CHECK(maxPosPh == maxPosStl);
 }
 
-BOOST_AUTO_TEST_CASE(Using_min_element_should_find_smallest_element_before_delimiter)
-{
+BOOST_AUTO_TEST_CASE(Using_min_element_should_find_smallest_element_before_delimiter) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(2);
@@ -131,8 +129,7 @@ BOOST_AUTO_TEST_CASE(Using_min_element_should_find_smallest_element_before_delim
 	BOOST_CHECK(minPosPh == minPosStl);
 }
 
-BOOST_AUTO_TEST_CASE(Using_max_element_with_comp_should_find_largest_element_before_delimiter)
-{
+BOOST_AUTO_TEST_CASE(Using_max_element_with_comp_should_find_largest_element_before_delimiter) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(2);
@@ -147,8 +144,7 @@ BOOST_AUTO_TEST_CASE(Using_max_element_with_comp_should_find_largest_element_bef
 	BOOST_CHECK(maxPosPh == maxPosStl);
 }
 
-BOOST_AUTO_TEST_CASE(Using_min_element_with_comp_should_find_smallest_element_before_delimiter)
-{
+BOOST_AUTO_TEST_CASE(Using_min_element_with_comp_should_find_smallest_element_before_delimiter) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(2);
@@ -163,8 +159,7 @@ BOOST_AUTO_TEST_CASE(Using_min_element_with_comp_should_find_smallest_element_be
 	BOOST_CHECK(minPosPh == minPosStl);
 }
 
-BOOST_AUTO_TEST_CASE(Until_for_each_should_visit_all_elements_before_delimiter)
-{
+BOOST_AUTO_TEST_CASE(Until_for_each_should_visit_all_elements_before_delimiter) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(2);
@@ -187,8 +182,7 @@ BOOST_AUTO_TEST_CASE(Until_for_each_should_visit_all_elements_before_delimiter)
 	BOOST_CHECK_EQUAL(visitedInts[3], 4);
 }
 
-BOOST_AUTO_TEST_CASE(Until_count_should_count_matching_elements_before_delimiter)
-{
+BOOST_AUTO_TEST_CASE(Until_count_should_count_matching_elements_before_delimiter) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(1);
@@ -204,8 +198,7 @@ BOOST_AUTO_TEST_CASE(Until_count_should_count_matching_elements_before_delimiter
 	BOOST_CHECK_EQUAL(count, 2);
 }
 
-BOOST_AUTO_TEST_CASE(Until_count_should_not_run_over_the_end_if_the_delimiter_is_not_found)
-{
+BOOST_AUTO_TEST_CASE(Until_count_should_not_run_over_the_end_if_the_delimiter_is_not_found) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(1);
@@ -221,8 +214,7 @@ BOOST_AUTO_TEST_CASE(Until_count_should_not_run_over_the_end_if_the_delimiter_is
 	BOOST_CHECK_EQUAL(count, 4);
 }
 
-BOOST_AUTO_TEST_CASE(Until_count_should_not_run_over_an_arbitrary_real_iterator_if_the_delimiter_is_not_found)
-{
+BOOST_AUTO_TEST_CASE(Until_count_should_not_run_over_an_arbitrary_real_iterator_if_the_delimiter_is_not_found) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(1);
@@ -238,8 +230,7 @@ BOOST_AUTO_TEST_CASE(Until_count_should_not_run_over_an_arbitrary_real_iterator_
 	BOOST_CHECK_EQUAL(count, 2);
 }
 
-BOOST_AUTO_TEST_CASE(Until_find_should_not_overstep_the_end_iterator_if_it_is_given_and_neither_value_nor_delimiter_is_found)
-{
+BOOST_AUTO_TEST_CASE(Until_find_should_not_overstep_the_end_iterator_if_it_is_given_and_neither_value_nor_delimiter_is_found) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(1);
@@ -256,8 +247,7 @@ BOOST_AUTO_TEST_CASE(Until_find_should_not_overstep_the_end_iterator_if_it_is_gi
 
 }
 
-BOOST_AUTO_TEST_CASE(Until_count_should_not_overstep_the_end_iterator_if_it_is_given_and_neither_value_nor_delimiter_is_found)
-{
+BOOST_AUTO_TEST_CASE(Until_count_should_not_overstep_the_end_iterator_if_it_is_given_and_neither_value_nor_delimiter_is_found) {
 	std::vector<int> v;
 	v.push_back(1);
 	v.push_back(1);
