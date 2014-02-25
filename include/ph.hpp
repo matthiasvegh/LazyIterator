@@ -104,12 +104,7 @@ auto until(Predicate&& p) { return Until<std::tuple<Predicate>>{std::make_tuple(
 template<typename Range>
 auto untilValue(const Range& vts) {
 	auto lambda = [=](const typename Range::value_type& v) {
-		for ( const auto& x : vts ) {
-			if ( v == x ) {
-				return true;
-			}
-		}
-		return false;
+		return std::find(vts.begin(), vts.end(), v) != vts.end();
 	};
 	return Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda)));
 }
