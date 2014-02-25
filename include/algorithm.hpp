@@ -9,6 +9,7 @@
 // begin be a forward iterator, and that begin is comparable to end.
 
 #include <utility>
+#include <iterator>
 
 namespace ph {
 
@@ -66,8 +67,8 @@ UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
 }
 
 template<class Begin, class End, class T>
-std::size_t count(Begin begin, End end, const T& value) {
-	std::size_t ret = 0;
+typename std::iterator_traits<Begin>::difference_type count(Begin begin, End end, const T& value) {
+	typename std::iterator_traits<Begin>::difference_type ret = 0;
 	for (; end != begin; ++begin) {
 		if (*begin == value) {
 			++ret;
@@ -77,8 +78,8 @@ std::size_t count(Begin begin, End end, const T& value) {
 }
 
 template<class Begin, class End, class UnaryPredicate>
-std::size_t count_if(Begin begin, End end, UnaryPredicate p) {
-	std::size_t ret = 0;
+typename std::iterator_traits<Begin>::difference_type count_if(Begin begin, End end, UnaryPredicate p) {
+	typename std::iterator_traits<Begin>::difference_type ret = 0;
 	for (; end != begin; ++begin) {
 		if (p(*begin)) {
 			++ret;
