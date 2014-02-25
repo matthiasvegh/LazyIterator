@@ -142,6 +142,22 @@ BOOST_AUTO_TEST_CASE(Using_max_element_should_find_largest_element_before_delimi
 	BOOST_CHECK(maxPosPh == maxPosStl);
 }
 
+BOOST_AUTO_TEST_CASE(Using_min_element_should_find_smallest_element_before_delimiter)
+{
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(0);
+
+	auto endIterator = ph::until([](const int& i) { return i==0; });
+
+	auto minPosPh = ph::min_element(v.begin(), endIterator);
+
+	auto minPosStl = std::min_element(v.begin(), v.begin()+2);
+
+	BOOST_CHECK(minPosPh == minPosStl);
+}
+
 BOOST_AUTO_TEST_CASE(Until_for_each_should_visit_all_elements_before_delimiter)
 {
 	std::vector<int> v;
