@@ -1,6 +1,8 @@
 
 include_rules
 
+CXX_FLAGS += -Wno-unused-variable
+
 : foreach *.cpp |> !cxx |>
 : *.o |> !ld |> demo
 

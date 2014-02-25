@@ -51,7 +51,7 @@ bool checkPredicate(Iterator it, ConstraintToCheck constraint) {
 
 template<class Iterator, class T1, std::size_t Index = 0>
 typename std::enable_if<Index >= std::tuple_size<T1>::value, bool>::type
-checkPredicates(Iterator&& it, const T1& predicates) {
+checkPredicates(Iterator&& /*it*/, const T1& /*predicates*/) {
 	return false;
 }
 
