@@ -32,16 +32,6 @@ namespace detail {
 		ConstraintToCheck constraintToCheck;
 	};
 
-	template<typename ValueType>
-	bool isElementOf(const ValueType& l, const ValueType& r) {
-		return l == r;
-	}
-
-	template<typename ValueType, typename... ValueTypes>
-	bool isElementOf(const ValueType& l, const ValueType& r, const ValueTypes&... os) {
-		return l == r || isElementOf(l, os...);
-	}
-
 } // namespace detail
 
 } // namespace ph
