@@ -14,8 +14,6 @@ BOOST_AUTO_TEST_CASE(Find_With_LazyStrIterator_should_behave_as_if_using_strlen)
 
 	const char* str = "1234567890";
 
-	auto posByStl = std::find(str, str+strlen(str), '6');
-
 	auto posByPh = ph::find(str, ph::LazyStrIterator{}, '6');
 
 	BOOST_REQUIRE(posByPh != str+strlen(str));
@@ -204,7 +202,7 @@ BOOST_AUTO_TEST_CASE(Until_for_each_should_visit_all_elements_before_delimiter)
 
 	std::vector<int> visitedInts;
 
-	auto maxPosPh = ph::for_each(v.begin(), endIterator, [&visitedInts](const int& i) {
+	ph::for_each(v.begin(), endIterator, [&visitedInts](const int& i) {
 			visitedInts.push_back(i);
 	});
 
