@@ -11,6 +11,9 @@ LD = $(CXX)
 
 CXX_FLAGS += -O3
 CXX_FLAGS += --std=c++1y
+CXX_FLAGS += -Wall
+CXX_FLAGS += -Wextra
+CXX_FLAGS += -Werror
 
 LD_FLAGS +=
 
