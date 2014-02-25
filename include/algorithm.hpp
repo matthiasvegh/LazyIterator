@@ -106,7 +106,7 @@ Begin max_element(Begin begin, End end) {
 	Begin answerIterator = begin++;
 
 	for(; end != begin; ++begin) {
-		if(*begin > *answerIterator)
+		if(*answerIterator < *begin)
 			answerIterator = begin;
 	}
 
