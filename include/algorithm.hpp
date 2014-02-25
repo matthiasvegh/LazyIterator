@@ -106,7 +106,43 @@ Begin max_element(Begin begin, End end) {
 	Begin answerIterator = begin++;
 
 	for(; end != begin; ++begin) {
-		if(*begin > *answerIterator)
+		if(*answerIterator < *begin)
+			answerIterator = begin;
+	}
+
+	return answerIterator;
+}
+
+template<typename Begin, typename End, typename Comp>
+Begin max_element(Begin begin, End end, Comp comp) {
+	Begin answerIterator = begin++;
+
+	for(; end != begin; ++begin) {
+		if(comp(*answerIterator, *begin))
+			answerIterator = begin;
+	}
+
+	return answerIterator;
+}
+
+template<typename Begin, typename End>
+Begin min_element(Begin begin, End end) {
+	Begin answerIterator = begin++;
+
+	for(; end != begin; ++begin) {
+		if(*begin < *answerIterator)
+			answerIterator = begin;
+	}
+
+	return answerIterator;
+}
+
+template<typename Begin, typename End, typename Comp>
+Begin min_element(Begin begin, End end, Comp comp) {
+	Begin answerIterator = begin++;
+
+	for(; end != begin; ++begin) {
+		if(comp(*begin, *answerIterator))
 			answerIterator = begin;
 	}
 
