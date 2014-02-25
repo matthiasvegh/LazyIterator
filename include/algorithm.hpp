@@ -47,12 +47,12 @@ bool all_of(Begin begin, End end, UnaryPredicate p) {
 }
 
 template<typename Begin, typename End, typename UnaryPredicate>
-Begin any_of(Begin begin, End end, UnaryPredicate p) {
+bool any_of(Begin begin, End end, UnaryPredicate p) {
 	return ph::find_if(begin, end, p) != end;
 }
 
 template<typename Begin, typename End, typename UnaryPredicate>
-Begin none_of(Begin begin, End end, UnaryPredicate p) {
+bool none_of(Begin begin, End end, UnaryPredicate p) {
 	return ph::find_if(begin, end, p) == end;
 }
 
