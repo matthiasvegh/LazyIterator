@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <functional>
 
 BOOST_AUTO_TEST_SUITE(mainTests)
 
@@ -154,6 +155,38 @@ BOOST_AUTO_TEST_CASE(Using_min_element_should_find_smallest_element_before_delim
 	auto minPosPh = ph::min_element(v.begin(), endIterator);
 
 	auto minPosStl = std::min_element(v.begin(), v.begin()+2);
+
+	BOOST_CHECK(minPosPh == minPosStl);
+}
+
+BOOST_AUTO_TEST_CASE(Using_max_element_with_comp_should_find_largest_element_before_delimiter)
+{
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+
+	auto endIterator = ph::until([](const int& i) { return i==3; });
+
+	auto maxPosPh = ph::max_element(v.begin(), endIterator, std::less<int>());
+
+	auto maxPosStl = std::max_element(v.begin(), v.begin()+2, std::less<int>());
+
+	BOOST_CHECK(maxPosPh == maxPosStl);
+}
+
+BOOST_AUTO_TEST_CASE(Using_min_element_with_comp_should_find_smallest_element_before_delimiter)
+{
+	std::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(0);
+
+	auto endIterator = ph::until([](const int& i) { return i==0; });
+
+	auto minPosPh = ph::min_element(v.begin(), endIterator, std::less<int>());
+
+	auto minPosStl = std::min_element(v.begin(), v.begin()+2, std::less<int>());
 
 	BOOST_CHECK(minPosPh == minPosStl);
 }
