@@ -8,6 +8,7 @@
 // type for both the begin and the end iterator, the simply require that the
 // begin be a forward iterator, and that begin is comparable to end.
 
+#include <utility>
 
 namespace ph {
 
@@ -61,7 +62,7 @@ UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
 	for (; end != begin; ++begin) {
 		f(*begin);
 	}
-	return f;
+	return std::move(f);
 }
 
 template<class Begin, class End, class T>
