@@ -1,7 +1,7 @@
 
 #include <boost/test/unit_test.hpp>
-#include "../include/ph.hpp"
-#include "../include/algorithm.hpp"
+#include "ph.hpp"
+#include "algorithm.hpp"
 
 #include <algorithm>
 #include <cstring>
