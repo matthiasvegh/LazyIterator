@@ -19,13 +19,11 @@ namespace ph {
 
 struct LazyStrIterator {
 	template<typename Iterator>
-	inline
 	bool operator==(Iterator&& other) {
 		return *other == '\0';
 	}
 
 	template<typename Iterator>
-	inline
 	bool operator!=(Iterator&& other) {
 		return !(*this == std::forward<Iterator>(other));
 	}
@@ -66,13 +64,11 @@ struct Until {
 	Until(const TupleType& predicates) : predicates(predicates) {}
 
 	template<typename Iterator>
-	inline
 	bool operator==(Iterator&& other) {
 		return checkPredicates(std::forward<Iterator>(other), predicates);
 	}
 
 	template<typename Iterator>
-	inline
 	bool operator!=(Iterator&& other) {
 		return !(*this == std::forward<Iterator>(other));
 	}
