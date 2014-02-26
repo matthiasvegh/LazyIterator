@@ -82,13 +82,11 @@ auto concatUntils(const Until<T1>& t1, const Until<T2>& t2) {
 }
 
 template<class T1, class T2>
-inline
 auto operator||(const Until<T1>& t1, const Until<T2>& t2) {
 	return concatUntils(t1, t2);
 }
 
 template<class T1, typename RealIterator>
-inline
 auto operator||(const Until<T1>& t1, RealIterator iterator) {
 	auto lambda = [=](RealIterator it) { return it == iterator; };
 	return concatUntils(t1, Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda))));
