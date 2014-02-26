@@ -2,6 +2,7 @@
 #define PH_HPP_
 
 #include <tuple>
+#include <algorithm>
 #include <type_traits>
 #include <initializer_list>
 
