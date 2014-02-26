@@ -5,13 +5,9 @@
 #include <type_traits>
 #include <initializer_list>
 
-#include <boost/type_traits/function_traits.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/mpl/at.hpp>
 #include <boost/function_types/parameter_types.hpp>
-#include <boost/function_types/function_type.hpp>
-#include <boost/function_types/parameter_types.hpp>
-#include <boost/function_types/function_arity.hpp>
-#include <boost/mpl/size.hpp>
+
 #include "detail.hpp"
 
 
