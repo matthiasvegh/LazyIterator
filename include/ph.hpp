@@ -16,13 +16,11 @@ namespace ph {
 
 struct LazyStrIterator {
 	template<typename Iterator>
-	inline
 	bool operator==(Iterator&& other) {
 		return *other == '\0';
 	}
 
 	template<typename Iterator>
-	inline
 	bool operator!=(Iterator&& other) {
 		return !(*this == std::forward<Iterator>(other));
 	}
@@ -63,13 +61,11 @@ struct Until {
 	Until(const TupleType& predicates) : predicates(predicates) {}
 
 	template<typename Iterator>
-	inline
 	bool operator==(Iterator&& other) {
 		return checkPredicates(std::forward<Iterator>(other), predicates);
 	}
 
 	template<typename Iterator>
-	inline
 	bool operator!=(Iterator&& other) {
 		return !(*this == std::forward<Iterator>(other));
 	}
@@ -83,13 +79,11 @@ auto concatUntils(const Until<T1>& t1, const Until<T2>& t2) {
 }
 
 template<class T1, class T2>
-inline
 auto operator||(const Until<T1>& t1, const Until<T2>& t2) {
 	return concatUntils(t1, t2);
 }
 
 template<class T1, typename RealIterator>
-inline
 auto operator||(const Until<T1>& t1, RealIterator iterator) {
 	auto lambda = [=](RealIterator it) { return it == iterator; };
 	return concatUntils(t1, Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda))));
