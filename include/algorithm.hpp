@@ -88,6 +88,16 @@ typename std::iterator_traits<Begin>::difference_type count_if(Begin begin, End 
 	return ret;
 }
 
+template<typename Begin1, typename Begin2, typename End1>
+bool equal(Begin1 begin1, End1 end1, Begin2 begin2) {
+	while (begin1 != end1) {
+		if (*begin1++ != *begin2++) {
+			return false;
+		}
+	}
+	return true;
+}
+
 // TODO: mismatch, and all its overloads.
 
 // TODO: equal and all its overloads.
