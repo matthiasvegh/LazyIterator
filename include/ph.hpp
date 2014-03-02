@@ -8,6 +8,7 @@
 
 #include <boost/mpl/at.hpp>
 #include <boost/function_types/parameter_types.hpp>
+#include <boost/operators.hpp>
 
 #include "detail.hpp"
 
@@ -16,16 +17,14 @@ namespace ph {
 
 struct LazyStrIterator {
 	template<typename Iterator>
-	bool operator==(Iterator&& other) {
+	bool operator==(Iterator&& other) const {
 		return *other == '\0';
-	}
-
-	template<typename Iterator>
-	bool operator!=(Iterator&& other) {
-		return !(*this == std::forward<Iterator>(other));
 	}
 };
 
+template<class It> bool operator==(It&& it, const LazyStrIterator& s) { return s == std::forward<It>(it); }
+template<class It> bool operator!=(const LazyStrIterator& s, It&& it) { return !(s == std::forward<It>(it)); }
+template<class It> bool operator!=(It&& it, const LazyStrIterator& s) { return !(s == std::forward<It>(it)); }
 
 template<typename Iterator, typename ConstraintToCheck,
 		bool runOnValue=std::is_same<
@@ -61,17 +60,16 @@ struct Until {
 	Until(const TupleType& predicates) : predicates(predicates) {}
 
 	template<typename Iterator>
-	bool operator==(Iterator&& other) {
+	bool operator==(Iterator&& other) const {
 		return checkPredicates(std::forward<Iterator>(other), predicates);
-	}
-
-	template<typename Iterator>
-	bool operator!=(Iterator&& other) {
-		return !(*this == std::forward<Iterator>(other));
 	}
 
 	TupleType predicates;
 };
+
+template<class T, class It> bool operator==(It&& it, const Until<T>& u) { return u == std::forward<It>(it); }
+template<class T, class It> bool operator!=(const Until<T>& u, It&& it) { return !(u == std::forward<It>(it)); }
+template<class T, class It> bool operator!=(It&& it, const Until<T>& u) { return !(u == std::forward<It>(it)); }
 
 template<class T1, class T2>
 auto concatUntils(const Until<T1>& t1, const Until<T2>& t2) {
