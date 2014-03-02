@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(Using_find_with_until_vals_should_work_as_if_many_untils_we
 	auto iterator3 = ph::until([](const int& i) { return i == 5; });
 
 	auto posComposite = ph::find(v.begin(), iterator1 || iterator2 || iterator3 || v.end(), 6);
-	auto posUntilVal = ph::find(v.begin(), ph::untilValue({3, 4, 5}) || v.end(), 6);
+	auto posUntilVal = ph::find(v.begin(), ph::untilValue(3, 4, 5) || v.end(), 6);
 
 	BOOST_CHECK(posComposite == posUntilVal);
 }

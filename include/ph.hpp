@@ -92,12 +92,19 @@ auto operator||(const Until<T1>& t1, RealIterator iterator) {
 template<typename Predicate>
 auto until(Predicate&& p) { return Until<std::tuple<Predicate>>{std::make_tuple(p)}; }
 
-template<typename Range>
-auto untilValue(const Range& vts) {
-	auto lambda = [=](const typename Range::value_type& v) {
-		return std::find(vts.begin(), vts.end(), v) != vts.end();
+template<typename Value>
+auto untilValue(Value value) {
+	return until([value](const Value& v) { return v == value; });
+}
+
+template<typename Value, typename... Values>
+auto untilValue(Value value, Value value2, Values... values) {
+	auto lambda = [=](const Value& v) {
+		return v == value;
 	};
-	return Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda)));
+	return Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda)))
+		||
+		untilValue(value2, values...);
 }
 
 template<class Value>
