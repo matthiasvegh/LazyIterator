@@ -98,9 +98,17 @@ bool equal(Begin1 begin1, End1 end1, Begin2 begin2) {
 	return true;
 }
 
-// TODO: mismatch, and all its overloads.
+template<typename Begin1, typename Begin2, typename End1, typename Pred>
+bool equal(Begin1 begin1, End1 end1, Begin2 begin2, Pred pred) {
+	while (begin1 != end1) {
+		if (!pred(*begin1++, *begin2++)) {
+			return false;
+		}
+	}
+	return true;
+}
 
-// TODO: equal and all its overloads.
+// TODO: mismatch, and all its overloads.
 
 // TODO: find_end and all its overloads.
 
