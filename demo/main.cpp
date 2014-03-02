@@ -31,7 +31,7 @@ int main() {
 		i = intDis(gen);
 	}
 
-	const int runs = 1000;
+	const int runs = 10000;
 
 	// test vars complete. now for testing.
 
