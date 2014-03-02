@@ -22,9 +22,9 @@ struct LazyStrIterator {
 	}
 };
 
-template<class It> bool operator==(It&& it, const LazyStrIterator& s) { return s == std::forward<It>(it); }
-template<class It> bool operator!=(const LazyStrIterator& s, It&& it) { return !(s == std::forward<It>(it)); }
-template<class It> bool operator!=(It&& it, const LazyStrIterator& s) { return !(s == std::forward<It>(it)); }
+template<typename It> bool operator==(It&& it, const LazyStrIterator& s) { return s == std::forward<It>(it); }
+template<typename It> bool operator!=(const LazyStrIterator& s, It&& it) { return !(s == std::forward<It>(it)); }
+template<typename It> bool operator!=(It&& it, const LazyStrIterator& s) { return !(s == std::forward<It>(it)); }
 
 template<typename Iterator, typename ConstraintToCheck,
 		bool runOnValue=std::is_same<
@@ -43,19 +43,19 @@ bool checkPredicate(Iterator it, ConstraintToCheck constraint) {
 	return detail::CheckPredicateHelper<Iterator, ConstraintToCheck, runOnValue>{constraint}(it);
 }
 
-template<class Iterator, class T1, std::size_t Index = 0>
+template<typename Iterator, typename T1, std::size_t Index = 0>
 typename std::enable_if<Index >= std::tuple_size<T1>::value, bool>::type
 checkPredicates(Iterator&& /*it*/, const T1& /*predicates*/) {
 	return false;
 }
 
-template<class Iterator, class T1, std::size_t Index = 0>
+template<typename Iterator, typename T1, std::size_t Index = 0>
 typename std::enable_if<Index < std::tuple_size<T1>::value, bool>::type
 checkPredicates(Iterator&& it, const T1& predicates) {
 	return checkPredicate(it, std::get<Index>(predicates)) || checkPredicates<Iterator, T1, Index+1>(it, predicates);
 }
 
-template<class TupleType>
+template<typename TupleType>
 struct Until {
 	Until(const TupleType& predicates) : predicates(predicates) {}
 
@@ -67,21 +67,21 @@ struct Until {
 	TupleType predicates;
 };
 
-template<class T, class It> bool operator==(It&& it, const Until<T>& u) { return u == std::forward<It>(it); }
-template<class T, class It> bool operator!=(const Until<T>& u, It&& it) { return !(u == std::forward<It>(it)); }
-template<class T, class It> bool operator!=(It&& it, const Until<T>& u) { return !(u == std::forward<It>(it)); }
+template<typename T, typename It> bool operator==(It&& it, const Until<T>& u) { return u == std::forward<It>(it); }
+template<typename T, typename It> bool operator!=(const Until<T>& u, It&& it) { return !(u == std::forward<It>(it)); }
+template<typename T, typename It> bool operator!=(It&& it, const Until<T>& u) { return !(u == std::forward<It>(it)); }
 
-template<class T1, class T2>
+template<typename T1, typename T2>
 auto concatUntils(const Until<T1>& t1, const Until<T2>& t2) {
 	return Until<decltype(std::tuple_cat(t1.predicates, t2.predicates))>{std::tuple_cat(t1.predicates, t2.predicates)};
 }
 
-template<class T1, class T2>
+template<typename T1, typename T2>
 auto operator||(const Until<T1>& t1, const Until<T2>& t2) {
 	return concatUntils(t1, t2);
 }
 
-template<class T1, typename RealIterator>
+template<typename T1, typename RealIterator>
 auto operator||(const Until<T1>& t1, RealIterator iterator) {
 	auto lambda = [=](RealIterator it) { return it == iterator; };
 	return concatUntils(t1, Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda))));
@@ -98,7 +98,7 @@ auto untilValue(const Range& vts) {
 	return Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda)));
 }
 
-template<class Value>
+template<typename Value>
 auto untilValue(std::initializer_list<Value> vts) {
 	return untilValue<std::initializer_list<Value>>(vts);
 }
