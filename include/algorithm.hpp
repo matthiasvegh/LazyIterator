@@ -108,6 +108,8 @@ bool equal(Begin1 begin1, End1 end1, Begin2 begin2, Pred pred) {
 	return true;
 }
 
+// TODO: 4 iterator version of equal
+
 // TODO: mismatch, and all its overloads.
 
 // TODO: find_end and all its overloads.

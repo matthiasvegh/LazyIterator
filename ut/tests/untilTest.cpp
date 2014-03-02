@@ -296,5 +296,37 @@ BOOST_AUTO_TEST_CASE(equal_works_with_until_iterators_negative_test) {
 	BOOST_CHECK(!ph::equal(v1.begin(), endIterator, v2.begin()));
 }
 
+BOOST_AUTO_TEST_CASE(equal_predicate_works_with_normal_iterators_positive_test) {
+	std::vector<int> v1 = { 1, 2, 3, 4, 5 };
+	std::vector<int> v2 = { 1, 2, 3, 4, 5, 6 };
+
+	BOOST_CHECK(ph::equal(v1.begin(), v1.end(), v2.begin(), std::equal_to<int>()));
+}
+
+BOOST_AUTO_TEST_CASE(equal_predicate_works_with_normal_iterators_negative_test) {
+	std::vector<int> v1 = { 1, 2, 3, 5, 5 };
+	std::vector<int> v2 = { 1, 2, 3, 4, 5, 6 };
+
+	BOOST_CHECK(!ph::equal(v1.begin(), v1.end(), v2.begin(), std::equal_to<int>()));
+}
+
+BOOST_AUTO_TEST_CASE(equal_predicate_works_with_until_iterators_positive_test) {
+	std::vector<int> v1 = { 1, 2, 3, 10, 5 };
+	std::vector<int> v2 = { 1, 2, 3, 4, 5, 6 };
+
+	auto endIterator = ph::until([](const int& i){ return i == 10; });
+
+	BOOST_CHECK(ph::equal(v1.begin(), endIterator, v2.begin(), std::equal_to<int>()));
+}
+
+BOOST_AUTO_TEST_CASE(equal_predicate_works_with_until_iterators_negative_test) {
+	std::vector<int> v1 = { 1, 2, 4, 10, 5 };
+	std::vector<int> v2 = { 1, 2, 3, 4, 5, 6 };
+
+	auto endIterator = ph::until([](const int& i){ return i == 10; });
+
+	BOOST_CHECK(!ph::equal(v1.begin(), endIterator, v2.begin(), std::equal_to<int>()));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
