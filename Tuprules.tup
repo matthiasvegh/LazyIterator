@@ -15,7 +15,9 @@ CXX_FLAGS += -Wall
 CXX_FLAGS += -Wextra
 CXX_FLAGS += -Werror
 
-LD_FLAGS +=
+GperfToolsLocation = /usr/local/lib
+
+LD_FLAGS += -L$(GperfToolsLocation)
 
 INCLUDE_DIRS += -I$(INCLUDE_DIR)
 
