@@ -169,7 +169,7 @@ int main() {
 		auto count = ph::count(v.begin(), endIterator, until2);
 
 		auto end = std::chrono::high_resolution_clock::now();
-		std::cout << "phFind until until1: " << (end - start).count() << std::endl;
+		std::cout << "phCount until until1: " << (end - start).count() << std::endl;
 
 	}
 
