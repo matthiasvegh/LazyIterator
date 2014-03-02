@@ -8,7 +8,6 @@
 
 #include <boost/mpl/at.hpp>
 #include <boost/function_types/parameter_types.hpp>
-#include <boost/operators.hpp>
 
 #include "detail.hpp"
 
