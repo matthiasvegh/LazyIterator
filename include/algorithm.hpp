@@ -58,7 +58,7 @@ bool none_of(Begin begin, End end, UnaryPredicate p) {
 	return ph::find_if(begin, end, p) == end;
 }
 
-template<typename Begin, typename End, class UnaryFunction>
+template<typename Begin, typename End, typename UnaryFunction>
 UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
 	for (; end != begin; ++begin) {
 		f(*begin);
@@ -66,7 +66,7 @@ UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
 	return std::move(f);
 }
 
-template<class Begin, class End, class T>
+template<typename Begin, typename End, typename T>
 typename std::iterator_traits<Begin>::difference_type count(Begin begin, End end, const T& value) {
 	typename std::iterator_traits<Begin>::difference_type ret = 0;
 	for (; end != begin; ++begin) {
@@ -88,9 +88,29 @@ typename std::iterator_traits<Begin>::difference_type count_if(Begin begin, End 
 	return ret;
 }
 
-// TODO: mismatch, and all its overloads.
+template<typename Begin1, typename Begin2, typename End1>
+bool equal(Begin1 begin1, End1 end1, Begin2 begin2) {
+	while (begin1 != end1) {
+		if (*begin1++ != *begin2++) {
+			return false;
+		}
+	}
+	return true;
+}
 
-// TODO: equal and all its overloads.
+template<typename Begin1, typename Begin2, typename End1, typename Pred>
+bool equal(Begin1 begin1, End1 end1, Begin2 begin2, Pred pred) {
+	while (begin1 != end1) {
+		if (!pred(*begin1++, *begin2++)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+// TODO: 4 iterator version of equal
+
+// TODO: mismatch, and all its overloads.
 
 // TODO: find_end and all its overloads.
 
