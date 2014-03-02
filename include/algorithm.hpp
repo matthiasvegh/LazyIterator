@@ -58,7 +58,7 @@ bool none_of(Begin begin, End end, UnaryPredicate p) {
 	return ph::find_if(begin, end, p) == end;
 }
 
-template<typename Begin, typename End, class UnaryFunction>
+template<typename Begin, typename End, typename UnaryFunction>
 UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
 	for (; end != begin; ++begin) {
 		f(*begin);
@@ -66,7 +66,7 @@ UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
 	return std::move(f);
 }
 
-template<class Begin, class End, class T>
+template<typename Begin, typename End, typename T>
 typename std::iterator_traits<Begin>::difference_type count(Begin begin, End end, const T& value) {
 	typename std::iterator_traits<Begin>::difference_type ret = 0;
 	for (; end != begin; ++begin) {
