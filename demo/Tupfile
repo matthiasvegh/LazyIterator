@@ -2,6 +2,10 @@
 include_rules
 
 CXX_FLAGS += -Wno-unused-variable
+ifeq ($(CXX),g++)
+	CXX_FLAGS += -Wno-unused-but-set-variable
+endif
+
 LIBS += -lprofiler
 
 : foreach *.cpp |> !cxx |>
