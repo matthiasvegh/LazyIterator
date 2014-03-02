@@ -24,58 +24,6 @@ int main() {
 		*it = dis(gen);
 	}
 
-	// test str complete. now for testing.
-
-	{
-		auto start = std::chrono::high_resolution_clock::now();
-
-		auto endIterator = str+strlen(str); // O(n)
-
-		auto pos = std::find(str, endIterator, 'a');
-
-		auto end = std::chrono::high_resolution_clock::now();
-
-		std::cout<< "std::find: " << (end - start).count() << std::endl;
-	}
-
-	{
-		auto start = std::chrono::high_resolution_clock::now();
-
-		auto endIterator = ph::LazyStrIterator{};
-
-		auto pos = ph::find(str, endIterator, 'a');
-
-		auto end = std::chrono::high_resolution_clock::now();
-
-		std::cout<< "ph::find: " << (end - start).count() << std::endl;
-	}
-
-	{
-		auto start = std::chrono::high_resolution_clock::now();
-
-		auto endIterator = ph::until([](const char& c) { return c=='A'; });
-
-		auto pos = ph::find(str, endIterator, 'a');
-
-		auto end = std::chrono::high_resolution_clock::now();
-
-		std::cout<< "ph::find with until: " << (end-start).count() << std::endl;
-	}
-
-	{
-		auto start = std::chrono::high_resolution_clock::now();
-
-		auto endIterator1 = ph::until([](const char& c) { return c=='A'; });
-		auto endIterator2 = ph::until([](const char& c) { return c=='B'; });
-
-		auto pos = ph::find(str, endIterator1 || endIterator2, 'a');
-
-		auto end = std::chrono::high_resolution_clock::now();
-
-		std::cout<< "ph::find with two untils: " << (end-start).count() << std::endl;
-	}
-
-
 	const int Size=6400000;
 	std::vector<int> v(Size);
 	for(auto& i: v) {
@@ -83,95 +31,153 @@ int main() {
 		i = intDis(gen);
 	}
 
-	const int until1 = 100;
-	const int until2 = 200;
+	const int runs = 1000;
 
-	{
-		auto start = std::chrono::high_resolution_clock::now();
+	// test vars complete. now for testing.
 
-		auto it = v.begin();
-		for(; it != v.end(); ++it) {
-			if(*it == until1)
-				break;
-			if(*it == until2)
-				break;
-			if(*it == 300)
-				break;
+	for(int run=1; run <= runs; ++run) {
+
+		{
+			auto start = std::chrono::high_resolution_clock::now();
+
+			auto endIterator = str+strlen(str); // O(n)
+
+			auto pos = std::find(str, endIterator, 'a');
+
+			auto end = std::chrono::high_resolution_clock::now();
+
+			//std::cout<< "std::find: " << (end - start).count() << std::endl;
 		}
 
-		assert(it != v.end());
+		{
+			auto start = std::chrono::high_resolution_clock::now();
 
-		const auto value = *it;
+			auto endIterator = ph::LazyStrIterator{};
 
-		assert(value == until1 || value == until2 || value == 300);
+			auto pos = ph::find(str, endIterator, 'a');
 
-		auto end = std::chrono::high_resolution_clock::now();
-		std::cout << "vectorFind: " << (end - start).count() << std::endl;
+			auto end = std::chrono::high_resolution_clock::now();
 
-	}
+			//std::cout<< "ph::find: " << (end - start).count() << std::endl;
+		}
 
-	{
-		auto start = std::chrono::high_resolution_clock::now();
+		{
+			auto start = std::chrono::high_resolution_clock::now();
 
-		auto endIterator1 = ph::until([until1](const int& i) { return i==until1; });
-		auto endIterator2 = ph::until([until2](const int& i) { return i==until2; });
+			auto endIterator = ph::until([](const char& c) { return c=='A'; });
 
-		auto endIterator = endIterator1 || endIterator2;
+			auto pos = ph::find(str, endIterator, 'a');
 
-		auto it = ph::find(v.begin(), endIterator || v.end(), 300);
+			auto end = std::chrono::high_resolution_clock::now();
 
-		assert(it != v.end());
+			//std::cout<< "ph::find with until: " << (end-start).count() << std::endl;
+		}
 
-		const auto value = *it;
-		assert(value == until1 || value == until2 || value == 300);
+		{
+			auto start = std::chrono::high_resolution_clock::now();
 
-		auto end = std::chrono::high_resolution_clock::now();
-		std::cout << "phFind: " << (end - start).count() << std::endl;
+			auto endIterator1 = ph::until([](const char& c) { return c=='A'; });
+			auto endIterator2 = ph::until([](const char& c) { return c=='B'; });
 
-	}
+			auto pos = ph::find(str, endIterator1 || endIterator2, 'a');
 
-	{
-		auto start = std::chrono::high_resolution_clock::now();
+			auto end = std::chrono::high_resolution_clock::now();
 
-
-		auto endIterator = ph::untilValue({100, 200});
-
-		auto it = ph::find(v.begin(), endIterator || v.end(), 300);
-
-		assert(it != v.end());
-
-		const auto value = *it;
-		assert(value == until1 || value == until2 || value == 300);
-
-		auto end = std::chrono::high_resolution_clock::now();
-		std::cout << "multiVal phFind: " << (end - start).count() << std::endl;
-
-	}
-
-	{
-		auto start = std::chrono::high_resolution_clock::now();
-
-		auto endIterator = std::find(v.begin(), v.end(), until1);
-
-		auto count = std::count(v.begin(), endIterator, until2);
+			//std::cout<< "ph::find with two untils: " << (end-start).count() << std::endl;
+		}
 
 
-		auto end = std::chrono::high_resolution_clock::now();
-		std::cout << "std::count until until1: " << (end - start).count() << std::endl;
+		const int until1 = 100;
+		const int until2 = 200;
 
-	}
+		{
+			auto start = std::chrono::high_resolution_clock::now();
 
-	{
-		auto start = std::chrono::high_resolution_clock::now();
+			auto it = v.begin();
+			for(; it != v.end(); ++it) {
+				if(*it == until1)
+					break;
+				if(*it == until2)
+					break;
+				if(*it == 300)
+					break;
+			}
 
-		auto endIterator = ph::until([until1](const int& i) { return i==until1; });
+			assert(it != v.end());
 
-		auto count = ph::count(v.begin(), endIterator, until2);
+			const auto value = *it;
 
-		auto end = std::chrono::high_resolution_clock::now();
-		std::cout << "phCount until until1: " << (end - start).count() << std::endl;
+			assert(value == until1 || value == until2 || value == 300);
 
-	}
+			auto end = std::chrono::high_resolution_clock::now();
+			//std::cout << "vectorFind: " << (end - start).count() << std::endl;
+
+		}
+
+		{
+			auto start = std::chrono::high_resolution_clock::now();
+
+			auto endIterator1 = ph::until([until1](const int& i) { return i==until1; });
+			auto endIterator2 = ph::until([until2](const int& i) { return i==until2; });
+
+			auto endIterator = endIterator1 || endIterator2;
+
+			auto it = ph::find(v.begin(), endIterator || v.end(), 300);
+
+			assert(it != v.end());
+
+			const auto value = *it;
+			assert(value == until1 || value == until2 || value == 300);
+
+			auto end = std::chrono::high_resolution_clock::now();
+			//std::cout << "phFind: " << (end - start).count() << std::endl;
+
+		}
+
+		{
+			auto start = std::chrono::high_resolution_clock::now();
+
+
+			auto endIterator = ph::untilValue({100, 200});
+
+			auto it = ph::find(v.begin(), endIterator || v.end(), 300);
+
+			assert(it != v.end());
+
+			const auto value = *it;
+			assert(value == until1 || value == until2 || value == 300);
+
+			auto end = std::chrono::high_resolution_clock::now();
+			//std::cout << "multiVal phFind: " << (end - start).count() << std::endl;
+
+		}
+
+		{
+			auto start = std::chrono::high_resolution_clock::now();
+
+			auto endIterator = std::find(v.begin(), v.end(), until1);
+
+			auto count = std::count(v.begin(), endIterator, until2);
+
+
+			auto end = std::chrono::high_resolution_clock::now();
+			//std::cout << "std::count until until1: " << (end - start).count() << std::endl;
+
+		}
+
+		{
+			auto start = std::chrono::high_resolution_clock::now();
+
+			auto endIterator = ph::until([until1](const int& i) { return i==until1; });
+
+			auto count = ph::count(v.begin(), endIterator, until2);
+
+			auto end = std::chrono::high_resolution_clock::now();
+			//std::cout << "phCount until until1: " << (end - start).count() << std::endl;
+
+		}
+
+	} // for run <= runs.
 
 }
 
