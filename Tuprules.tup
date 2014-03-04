@@ -15,12 +15,13 @@ CXX_FLAGS += -Wall
 CXX_FLAGS += -Wextra
 CXX_FLAGS += -Werror
 
-GperfToolsLocation = /usr/local/lib
+GPERFTOOLS_DIR = /usr/local/lib
 
-LD_FLAGS += -L$(GperfToolsLocation)
+LD_FLAGS += -L$(GPERFTOOLS_DIR)
 
 INCLUDE_DIRS += -I$(INCLUDE_DIR)
 
-!cxx = |> $(CXX) $(CXX_FLAGS) $(INCLUDE_DIRS) -c %f -o %o |> %B.o
-!ld = |> $(LD) $(LD_FLAGS) %f -o %o $(LIBS) |>
+!cxx = |> ^ $(CXX) BUILD: %o^ $(CXX) $(CXX_FLAGS) $(INCLUDE_DIRS) -c %f -o %o |> %B.o
+!ld = |> ^ $(LD) LINK: %o^ $(LD) $(LD_FLAGS) %f -o %o $(LIBS) |>
+!ut = |> ^ $(CXX) UT^ ./%f && touch %o |>
 

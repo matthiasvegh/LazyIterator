@@ -1,11 +1,9 @@
-.gitignore
 
 include_rules
 
 LIBS += /usr/local/lib/libboost_unit_test_framework.a
 
-
-
 : foreach tests/*.cpp *.cpp |> !cxx |>
 : *.o tests/*.o |> !ld |> unitTest
-: unitTest |> ./%f && touch %o |> testResult
+: unitTest |> !ut |> testResult
+
