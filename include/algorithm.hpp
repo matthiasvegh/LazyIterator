@@ -19,7 +19,7 @@ namespace ph {
 using std::find;
 template<typename Begin, typename End, typename ValueType>
 Begin find(Begin begin, End end, const ValueType& value) {
-	for(; end != begin; ++begin) {
+	for(; begin != end; ++begin) {
 		if(*begin == value) {
 			return begin;
 		}
@@ -30,7 +30,7 @@ Begin find(Begin begin, End end, const ValueType& value) {
 using std::find_if;
 template<typename Begin, typename End, typename UnaryPredicate>
 Begin find_if(Begin begin, End end, UnaryPredicate p) {
-	for(; end != begin; ++begin) {
+	for(; begin != end; ++begin) {
 		if(p(*begin))
 			return begin;
 	}
@@ -40,7 +40,7 @@ Begin find_if(Begin begin, End end, UnaryPredicate p) {
 using std::find_if_not;
 template<typename Begin, typename End, typename UnaryPredicate>
 Begin find_if_not(Begin begin, End end, UnaryPredicate q) {
-	for(; end != begin; ++begin) {
+	for(; begin != end; ++begin) {
 		if(!q(*begin))
 			return begin;
 	}
@@ -68,7 +68,7 @@ bool none_of(Begin begin, End end, UnaryPredicate p) {
 using std::for_each;
 template<typename Begin, typename End, typename UnaryFunction>
 UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
-	for (; end != begin; ++begin) {
+	for (; begin != end; ++begin) {
 		f(*begin);
 	}
 	return std::move(f);
@@ -78,7 +78,7 @@ using std::count;
 template<typename Begin, typename End, typename T>
 typename std::iterator_traits<Begin>::difference_type count(Begin begin, End end, const T& value) {
 	typename std::iterator_traits<Begin>::difference_type ret = 0;
-	for (; end != begin; ++begin) {
+	for (; begin != end; ++begin) {
 		if (*begin == value) {
 			++ret;
 		}
@@ -90,7 +90,7 @@ using std::count_if;
 template<class Begin, class End, class UnaryPredicate>
 typename std::iterator_traits<Begin>::difference_type count_if(Begin begin, End end, UnaryPredicate p) {
 	typename std::iterator_traits<Begin>::difference_type ret = 0;
-	for (; end != begin; ++begin) {
+	for (; begin != end; ++begin) {
 		if (p(*begin)) {
 			++ret;
 		}
@@ -139,7 +139,7 @@ template<typename Begin, typename End>
 Begin max_element(Begin begin, End end) {
 	Begin answerIterator = begin++;
 
-	for(; end != begin; ++begin) {
+	for(; begin != end; ++begin) {
 		if(*answerIterator < *begin)
 			answerIterator = begin;
 	}
@@ -151,7 +151,7 @@ template<typename Begin, typename End, typename Comp>
 Begin max_element(Begin begin, End end, Comp comp) {
 	Begin answerIterator = begin++;
 
-	for(; end != begin; ++begin) {
+	for(; begin != end; ++begin) {
 		if(comp(*answerIterator, *begin))
 			answerIterator = begin;
 	}
@@ -164,7 +164,7 @@ template<typename Begin, typename End>
 Begin min_element(Begin begin, End end) {
 	Begin answerIterator = begin++;
 
-	for(; end != begin; ++begin) {
+	for(; begin != end; ++begin) {
 		if(*begin < *answerIterator)
 			answerIterator = begin;
 	}
@@ -176,7 +176,7 @@ template<typename Begin, typename End, typename Comp>
 Begin min_element(Begin begin, End end, Comp comp) {
 	Begin answerIterator = begin++;
 
-	for(; end != begin; ++begin) {
+	for(; begin != end; ++begin) {
 		if(comp(*begin, *answerIterator))
 			answerIterator = begin;
 	}
