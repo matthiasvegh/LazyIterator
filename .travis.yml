@@ -1,0 +1,27 @@
+language: cpp
+
+compiler: gcc
+
+before_install:
+    - sudo apt-get upgrade -qq
+    - sudo apt-get install -qq g++-4.8 tup
+    - wget -O boost_1_54_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.gz/download
+    - tar xzvf boost_1_54_0.tar.gz
+    - cd boost_1_54_0/
+    - wget https://dl.dropbox.com/u/88131281/install_boost.sh
+    - chmod +x install_boost.sh
+    - ./install_boost.sh
+
+before_script:
+    - tup init
+    - cd build-gcc
+
+script:
+    tup upd .
+
+notifications:
+    email:
+        - matyas.vegh@gmail.com
+    on_success: change
+    on_failure: always
+
