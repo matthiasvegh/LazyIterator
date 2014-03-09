@@ -1,4 +1,4 @@
-LazyIterator
+LazyIterator  [![Build Status](https://travis-ci.org/matthiasvegh/LazyIterator.png?branch=master)](https://travis-ci.org/matthiasvegh/LazyIterator)
 ============
 
 A repo that at some point might become a library.
