@@ -28,6 +28,7 @@ script:
 notifications:
     email:
         - matyas.vegh@gmail.com
+        - r0maikx02b@gmail.com
     on_success: change
     on_failure: always
 
