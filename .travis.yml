@@ -1,25 +1,29 @@
 language: cpp
 
 compiler:
-  - clang
+    - clang
+    - gcc
 
 before_install:
-  - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
-  - sudo add-apt-repository -y ppa:boost-latest/ppa
-  - sudo apt-get update -qq
+    - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
+    - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
+    - sudo add-apt-repository -y ppa:boost-latest/ppa
+    - sudo apt-get update -qq
 
 install:
-  - if [ "$CXX" == "clang++" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.4; fi
-  - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
-  - sudo apt-get install --allow-unauthenticated -qq boost1.55
+    - if [ "$CXX" == "clang++" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.4; fi
+    - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
+    - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
+    - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8"; fi
+    - sudo apt-get install --allow-unauthenticated -qq boost1.55
 
 script:
-  - $CXX --std=c++1y -I./include ./demo/main.cpp
-  - $CXX --std=c++1y -I./include -c ./ut/testMain.cpp -o testMain.o
-  - $CXX --std=c++1y -I./include -c ./ut/tests/untilTest.cpp -o untilTest.o
-  - $CXX --std=c++1y -I./include -c ./ut/tests/lazyStrIteratorTest.cpp -o lazyStrIteratorTest.o
-  - $CXX --std=c++1y testMain.o untilTest.o lazyStrIteratorTest.o /usr/lib/x86_64-linux-gnu/libboost_unit_test_framework.a -o unitTest
-  - ./unitTest
+    - $CXX --std=c++1y -I./include ./demo/main.cpp
+    - $CXX --std=c++1y -I./include -c ./ut/testMain.cpp -o testMain.o
+    - $CXX --std=c++1y -I./include -c ./ut/tests/untilTest.cpp -o untilTest.o
+    - $CXX --std=c++1y -I./include -c ./ut/tests/lazyStrIteratorTest.cpp -o lazyStrIteratorTest.o
+    - $CXX --std=c++1y testMain.o untilTest.o lazyStrIteratorTest.o /usr/lib/x86_64-linux-gnu/libboost_unit_test_framework.a -o unitTest
+    - ./unitTest
 
 notifications:
     email:
