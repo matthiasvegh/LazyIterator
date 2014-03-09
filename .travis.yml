@@ -4,7 +4,7 @@ compiler: gcc
 
 before_install:
     - sudo apt-get upgrade -qq
-    - sudo apt-get install -qq g++-4.8 tup
+    - sudo apt-get install -qq g++-4.8
     - wget -O boost_1_54_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.gz/download
     - tar xzvf boost_1_54_0.tar.gz
     - cd boost_1_54_0/
@@ -13,11 +13,9 @@ before_install:
     - ./install_boost.sh
 
 before_script:
-    - tup init
-    - cd build-gcc
 
 script:
-    tup upd .
+    g++-4.8 demo.cpp -I./include
 
 notifications:
     email:
