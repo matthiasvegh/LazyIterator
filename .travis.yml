@@ -17,9 +17,9 @@ script:
   - $CXX --std=c++1y -I./include ./demo/main.cpp
   - $CXX --std=c++1y -I./include -c ./ut/testMain.cpp -o testMain.o
   - $CXX --std=c++1y -I./include -c ./ut/tests/untilTest.cpp -o untilTest.o
-  - $CXX --std=c++1y -I./include -c ./ut/tests/lazyStrIteratorTest.cpp lazyStrIteratorTest.o
+  - $CXX --std=c++1y -I./include -c ./ut/tests/lazyStrIteratorTest.cpp -o lazyStrIteratorTest.o
   - $CXX --std=c++1y testMain.o untilTest.o lazyStrIteratorTest.o /usr/local/lib/libboost_unit_test_framework.a
-
+  - ls /usr/local/lib/libboost*
 
 notifications:
     email:
