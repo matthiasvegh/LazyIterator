@@ -14,7 +14,7 @@ install:
   - sudo apt-get install --allow-unauthenticated -qq boost1.55
 
 script:
-  - $CXX --version
+  - $CXX --std=c++1y ./demo/main.cpp
 
 notifications:
     email:
