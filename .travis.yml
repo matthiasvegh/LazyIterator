@@ -1,10 +1,8 @@
 language: cpp
 
-compiler: gcc
+compiler: clang-3.3
 
 before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq g++-4.8
     - wget -O boost_1_54_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.gz/download
     - tar xzvf boost_1_54_0.tar.gz
     - cd boost_1_54_0/
@@ -15,7 +13,7 @@ before_install:
 before_script:
 
 script:
-    g++-4.8 demo.cpp -I./include
+    clang++ demo.cpp -I./include
 
 notifications:
     email:
