@@ -18,12 +18,11 @@ install:
     - sudo apt-get install --allow-unauthenticated -qq boost1.55
 
 script:
-    - $CXX --std=c++1y -I./include ./demo/main.cpp
-    - $CXX --std=c++1y -I./include -c ./ut/testMain.cpp -o testMain.o
-    - $CXX --std=c++1y -I./include -c ./ut/tests/untilTest.cpp -o untilTest.o
-    - $CXX --std=c++1y -I./include -c ./ut/tests/lazyStrIteratorTest.cpp -o lazyStrIteratorTest.o
-    - $CXX --std=c++1y testMain.o untilTest.o lazyStrIteratorTest.o /usr/lib/x86_64-linux-gnu/libboost_unit_test_framework.a -o unitTest
-    - ./unitTest
+    - mkdir -p build-cmake
+    - cd build-cmake
+    - cmake -D CMAKE_CXX_COMPILER=$CXX ..
+    - make unitTest
+    - ut/unitTest
 
 notifications:
     email:
