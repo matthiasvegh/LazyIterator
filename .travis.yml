@@ -8,12 +8,12 @@ before_install:
     - cd boost_1_54_0/
     - wget https://dl.dropbox.com/u/88131281/install_boost.sh
     - chmod +x install_boost.sh
-    - ./install_boost.sh
+    - ./install_boost.sh >/dev/null 2>&1
 
 before_script:
 
 script:
-    clang++ demo.cpp -I./include
+    $CXX demo.cpp -I./include
 
 notifications:
     email:
