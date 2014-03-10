@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <iostream>
 #include <type_traits>
+
+#include "LazyStrIterator.hpp"
 #include "ph.hpp"
 #include "algorithm.hpp"
 
