@@ -58,6 +58,20 @@ struct OrNode : BaseNode {
 	RightNode rightNode;
 };
 
+template<typename LeftNode, typename RightNode>
+struct AndNode : BaseNode {
+
+	AndNode(const LeftNode& leftNode, const RightNode& rightNode) : leftNode(leftNode), rightNode(rightNode) {}
+
+	template<typename Iterator>
+	bool operator()(Iterator&& it) const {
+		return leftNode(std::forward<Iterator>(it)) && rightNode(std::forward<Iterator>(it));
+	}
+
+	LeftNode leftNode;
+	RightNode rightNode;
+};
+
 template<typename It, typename Node>
 typename std::enable_if<std::is_base_of<BaseNode, Node>::value, bool>::type operator==(const Node& node, It&& it) {
 	return node(std::forward<It>(it));
@@ -97,6 +111,27 @@ typename std::enable_if<
 	!std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
 	OrNode<LeafNode<LeftNode>, LeafNode<RightNode>>>::type operator||(const LeftNode& leftNode, const RightNode& rightNode) {
 	return OrNode<LeafNode<LeftNode>, RightNode>(LeafNode<LeftNode>(leftNode), rightNode);
+}
+
+template<typename LeftNode, typename RightNode>
+typename std::enable_if<
+	std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
+	AndNode<LeftNode, RightNode>>::type operator&&(const LeftNode& leftNode, const RightNode& rightNode) {
+	return AndNode<LeftNode, RightNode>(leftNode, rightNode);
+}
+
+template<typename LeftNode, typename RightNode>
+typename std::enable_if<
+	std::is_base_of<BaseNode, LeftNode>::value && !std::is_base_of<BaseNode, RightNode>::value,
+	AndNode<LeftNode, LeafNode<RightNode>>>::type operator&&(const LeftNode& leftNode, const RightNode& rightNode) {
+	return AndNode<LeftNode, LeafNode<RightNode>>(leftNode, LeafNode<RightNode>(rightNode));
+}
+
+template<typename LeftNode, typename RightNode>
+typename std::enable_if<
+	!std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
+	AndNode<LeafNode<LeftNode>, LeafNode<RightNode>>>::type operator&&(const LeftNode& leftNode, const RightNode& rightNode) {
+	return AndNode<LeafNode<LeftNode>, RightNode>(LeafNode<LeftNode>(leftNode), rightNode);
 }
 
 template<typename Constraint>
