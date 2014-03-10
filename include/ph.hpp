@@ -72,6 +72,20 @@ struct AndNode : BaseNode {
 	RightNode rightNode;
 };
 
+template<typename OperandNode>
+struct NotNode : BaseNode {
+
+	NotNode(const OperandNode& operandNode) : operandNode(operandNode) {}
+
+	template<typename Iterator>
+	bool operator()(Iterator&& it) const {
+		return !operandNode(std::forward<Iterator>(it));
+	}
+
+	OperandNode operandNode;
+};
+
+
 template<typename It, typename Node>
 typename std::enable_if<std::is_base_of<BaseNode, Node>::value, bool>::type operator==(const Node& node, It&& it) {
 	return node(std::forward<It>(it));
@@ -133,6 +147,14 @@ typename std::enable_if<
 	AndNode<LeafNode<LeftNode>, LeafNode<RightNode>>>::type operator&&(const LeftNode& leftNode, const RightNode& rightNode) {
 	return AndNode<LeafNode<LeftNode>, RightNode>(LeafNode<LeftNode>(leftNode), rightNode);
 }
+
+template<typename OperandNode>
+typename std::enable_if<
+	std::is_base_of<BaseNode, OperandNode>::value,
+	NotNode<OperandNode>>::type operator!(const OperandNode& operandNode) {
+	return NotNode<OperandNode>(operandNode);
+}
+
 
 template<typename Constraint>
 LeafNode<Constraint> until(Constraint&& c) {
