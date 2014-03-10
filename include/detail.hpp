@@ -20,16 +20,16 @@ namespace detail {
 		ConstraintToCheck constraintToCheck;
 	};
 
-	template<typename Iterator, typename ConstraintToCheck>
-	struct CheckPredicateHelper<Iterator, ConstraintToCheck, false> {
+	template<typename Iterator, typename IteratorToCheck>
+	struct CheckPredicateHelper<Iterator, IteratorToCheck, false> {
 
-		CheckPredicateHelper(ConstraintToCheck constraintToCheck) : constraintToCheck(constraintToCheck) {}
+		CheckPredicateHelper(IteratorToCheck iteratorToCheck) : iteratorToCheck(iteratorToCheck) {}
 
 		bool operator()(Iterator it) const {
-			return constraintToCheck(it);
+			return iteratorToCheck == it;
 		}
 
-		ConstraintToCheck constraintToCheck;
+		IteratorToCheck iteratorToCheck;
 	};
 
 } // namespace detail

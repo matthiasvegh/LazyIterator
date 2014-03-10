@@ -1,16 +1,10 @@
 #ifndef PH_HPP_
 #define PH_HPP_
 
-#include <tuple>
-#include <algorithm>
+#include <utility>
 #include <type_traits>
-#include <initializer_list>
-
-#include <boost/mpl/at.hpp>
-#include <boost/function_types/parameter_types.hpp>
 
 #include "detail.hpp"
-
 
 namespace ph {
 
@@ -25,88 +19,156 @@ template<typename It> bool operator==(It&& it, const LazyStrIterator& s) { retur
 template<typename It> bool operator!=(const LazyStrIterator& s, It&& it) { return !(s == std::forward<It>(it)); }
 template<typename It> bool operator!=(It&& it, const LazyStrIterator& s) { return !(s == std::forward<It>(it)); }
 
-template<typename Iterator, typename ConstraintToCheck,
-		bool runOnValue=std::is_same<
-			typename std::decay<
-				typename boost::mpl::at_c<
-					typename boost::function_types::parameter_types<decltype(&ConstraintToCheck::operator())>
-					,
-					1
-				>::type
-			>::type
-			,
-			typename std::decay<decltype(*std::declval<Iterator>())>::type
-		>::value
->
-bool checkPredicate(Iterator it, ConstraintToCheck constraint) {
-	return detail::CheckPredicateHelper<Iterator, ConstraintToCheck, runOnValue>{constraint}(it);
+template<typename Iterator, typename Constraint>
+typename std::enable_if<std::is_same<Iterator, Constraint>::value, bool>::type checkPredicate(Iterator it, Constraint constraint) {
+	return it == constraint;
 }
 
-template<typename Iterator, typename T1, std::size_t Index = 0>
-typename std::enable_if<Index >= std::tuple_size<T1>::value, bool>::type
-checkPredicates(Iterator&& /*it*/, const T1& /*predicates*/) {
-	return false;
+template<typename Iterator, typename Constraint>
+typename std::enable_if<!std::is_same<Iterator, Constraint>::value, bool>::type checkPredicate(Iterator it, Constraint constraint) {
+	return constraint(*it);
 }
 
-template<typename Iterator, typename T1, std::size_t Index = 0>
-typename std::enable_if<Index < std::tuple_size<T1>::value, bool>::type
-checkPredicates(Iterator&& it, const T1& predicates) {
-	return checkPredicate(it, std::get<Index>(predicates)) || checkPredicates<Iterator, T1, Index+1>(it, predicates);
-}
+struct BaseNode {};
 
-template<typename TupleType>
-struct Until {
-	Until(const TupleType& predicates) : predicates(predicates) {}
+template<class Constraint>
+struct LeafNode : BaseNode {
+
+	LeafNode(const Constraint& constraint) : constraint(constraint) {}
 
 	template<typename Iterator>
-	bool operator==(Iterator&& other) const {
-		return checkPredicates(std::forward<Iterator>(other), predicates);
+	bool operator()(Iterator&& it) const {
+		return checkPredicate(std::forward<Iterator>(it), constraint);
 	}
 
-	TupleType predicates;
+	Constraint constraint;
 };
 
-template<typename T, typename It> bool operator==(It&& it, const Until<T>& u) { return u == std::forward<It>(it); }
-template<typename T, typename It> bool operator!=(const Until<T>& u, It&& it) { return !(u == std::forward<It>(it)); }
-template<typename T, typename It> bool operator!=(It&& it, const Until<T>& u) { return !(u == std::forward<It>(it)); }
+template<typename LeftNode, typename RightNode>
+struct OrNode : BaseNode {
 
-template<typename T1, typename T2>
-auto concatUntils(const Until<T1>& t1, const Until<T2>& t2) {
-	return Until<decltype(std::tuple_cat(t1.predicates, t2.predicates))>{std::tuple_cat(t1.predicates, t2.predicates)};
+	OrNode(const LeftNode& leftNode, const RightNode& rightNode) : leftNode(leftNode), rightNode(rightNode) {}
+
+	template<typename Iterator>
+	bool operator()(Iterator&& it) const {
+		return leftNode(std::forward<Iterator>(it)) || rightNode(std::forward<Iterator>(it));
+	}
+
+	LeftNode leftNode;
+	RightNode rightNode;
+};
+
+template<typename LeftNode, typename RightNode>
+struct AndNode : BaseNode {
+
+	AndNode(const LeftNode& leftNode, const RightNode& rightNode) : leftNode(leftNode), rightNode(rightNode) {}
+
+	template<typename Iterator>
+	bool operator()(Iterator&& it) const {
+		return leftNode(std::forward<Iterator>(it)) && rightNode(std::forward<Iterator>(it));
+	}
+
+	LeftNode leftNode;
+	RightNode rightNode;
+};
+
+template<typename OperandNode>
+struct NotNode : BaseNode {
+
+	NotNode(const OperandNode& operandNode) : operandNode(operandNode) {}
+
+	template<typename Iterator>
+	bool operator()(Iterator&& it) const {
+		return !operandNode(std::forward<Iterator>(it));
+	}
+
+	OperandNode operandNode;
+};
+
+
+template<typename It, typename Node>
+typename std::enable_if<std::is_base_of<BaseNode, Node>::value, bool>::type operator==(const Node& node, It&& it) {
+	return node(std::forward<It>(it));
 }
 
-template<typename T1, typename T2>
-auto operator||(const Until<T1>& t1, const Until<T2>& t2) {
-	return concatUntils(t1, t2);
+template<typename It, typename Node>
+typename std::enable_if<std::is_base_of<BaseNode, Node>::value, bool>::type operator==(It&& it, const Node& node) {
+	return node == std::forward<It>(it);
 }
 
-template<typename T1, typename RealIterator>
-auto operator||(const Until<T1>& t1, RealIterator iterator) {
-	auto lambda = [=](RealIterator it) { return it == iterator; };
-	return concatUntils(t1, Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda))));
+template<typename It, typename Node>
+typename std::enable_if<std::is_base_of<BaseNode, Node>::value, bool>::type operator!=(const Node& node, It&& it) {
+	return !(node == std::forward<It>(it));
 }
 
-template<typename Predicate>
-auto until(Predicate&& p) { return Until<std::tuple<Predicate>>{std::make_tuple(p)}; }
+template<typename It, typename Node>
+typename std::enable_if<std::is_base_of<BaseNode, Node>::value, bool>::type operator!=(It&& it, const Node& node) {
+	return !(node == std::forward<It>(it));
+}
+
+template<typename LeftNode, typename RightNode>
+typename std::enable_if<
+	std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
+	OrNode<LeftNode, RightNode>>::type operator||(const LeftNode& leftNode, const RightNode& rightNode) {
+	return OrNode<LeftNode, RightNode>(leftNode, rightNode);
+}
+
+template<typename LeftNode, typename RightNode>
+typename std::enable_if<
+	std::is_base_of<BaseNode, LeftNode>::value && !std::is_base_of<BaseNode, RightNode>::value,
+	OrNode<LeftNode, LeafNode<RightNode>>>::type operator||(const LeftNode& leftNode, const RightNode& rightNode) {
+	return OrNode<LeftNode, LeafNode<RightNode>>(leftNode, LeafNode<RightNode>(rightNode));
+}
+
+template<typename LeftNode, typename RightNode>
+typename std::enable_if<
+	!std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
+	OrNode<LeafNode<LeftNode>, LeafNode<RightNode>>>::type operator||(const LeftNode& leftNode, const RightNode& rightNode) {
+	return OrNode<LeafNode<LeftNode>, RightNode>(LeafNode<LeftNode>(leftNode), rightNode);
+}
+
+template<typename LeftNode, typename RightNode>
+typename std::enable_if<
+	std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
+	AndNode<LeftNode, RightNode>>::type operator&&(const LeftNode& leftNode, const RightNode& rightNode) {
+	return AndNode<LeftNode, RightNode>(leftNode, rightNode);
+}
+
+template<typename LeftNode, typename RightNode>
+typename std::enable_if<
+	std::is_base_of<BaseNode, LeftNode>::value && !std::is_base_of<BaseNode, RightNode>::value,
+	AndNode<LeftNode, LeafNode<RightNode>>>::type operator&&(const LeftNode& leftNode, const RightNode& rightNode) {
+	return AndNode<LeftNode, LeafNode<RightNode>>(leftNode, LeafNode<RightNode>(rightNode));
+}
+
+template<typename LeftNode, typename RightNode>
+typename std::enable_if<
+	!std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
+	AndNode<LeafNode<LeftNode>, LeafNode<RightNode>>>::type operator&&(const LeftNode& leftNode, const RightNode& rightNode) {
+	return AndNode<LeafNode<LeftNode>, RightNode>(LeafNode<LeftNode>(leftNode), rightNode);
+}
+
+template<typename OperandNode>
+typename std::enable_if<
+	std::is_base_of<BaseNode, OperandNode>::value,
+	NotNode<OperandNode>>::type operator!(const OperandNode& operandNode) {
+	return NotNode<OperandNode>(operandNode);
+}
+
+
+template<typename Constraint>
+LeafNode<Constraint> until(Constraint&& c) {
+	return LeafNode<Constraint>(c);
+}
 
 template<typename Value>
-auto untilValue(Value value) {
+auto untilValue(const Value& value) {
 	return until([value](const Value& v) { return v == value; });
 }
 
 template<typename Value, typename... Values>
-auto untilValue(Value value, Value value2, Values... values) {
-	auto lambda = [=](const Value& v) {
-		return v == value;
-	};
-	return Until<std::tuple<decltype(lambda)>>(std::make_tuple(std::move(lambda)))
-		||
-		untilValue(value2, values...);
-}
-
-template<typename Value>
-auto untilValue(std::initializer_list<Value> vts) {
-	return untilValue<std::initializer_list<Value>>(vts);
+auto untilValue(const Value& value, const Values&... values) {
+	return untilValue(value) || untilValue(values...);
 }
 
 } // namespace ph
