@@ -260,5 +260,64 @@ BOOST_AUTO_TEST_CASE(equal_predicate_works_with_until_iterators_negative_test) {
 	BOOST_CHECK(!ph::equal(v1.begin(), endIterator, v2.begin(), std::equal_to<int>()));
 }
 
+BOOST_AUTO_TEST_CASE(find_and_operator_works_if_it_gets_true) {
+	std::vector<int> v1 = { 1, 2, 4, 6, 10, 5 };
+
+	auto endIterator = ph::until([](const int& i){ return i % 3 == 0; }) &&
+		ph::until([](const int& i){ return i % 2 == 0; });
+
+	auto it = ph::find(v1.begin(), endIterator, 5);
+
+	BOOST_CHECK_EQUAL(*it, 6);
+	BOOST_CHECK_EQUAL(it - v1.begin(), 3);
+}
+
+BOOST_AUTO_TEST_CASE(find_and_operator_works_if_it_doesnt_get_true) {
+	std::vector<int> v1 = { 1, 2, 4, 7, 10, 5 };
+
+	auto endIterator = ph::until([](const int& i){ return i % 3 == 0; }) &&
+		ph::until([](const int& i){ return i % 2 == 0; });
+
+	auto it = ph::find(v1.begin(), endIterator, 5);
+
+	BOOST_CHECK_EQUAL(*it, 5);
+	BOOST_CHECK_EQUAL(it - v1.begin(), 5);
+}
+
+BOOST_AUTO_TEST_CASE(find_and_operator_works_with_or_real_end_if_it_gets_true) {
+	std::vector<int> v1 = { 1, 2, 4, 6, 10, 5 };
+
+	auto endIterator = (ph::until([](const int& i){ return i % 3 == 0; }) &&
+		ph::until([](const int& i){ return i % 2 == 0; })) || v1.end();
+
+	auto it = ph::find(v1.begin(), endIterator, 5);
+
+	BOOST_CHECK_EQUAL(*it, 6);
+	BOOST_CHECK_EQUAL(it - v1.begin(), 3);
+}
+
+BOOST_AUTO_TEST_CASE(find_and_operator_works_with_or_real_end_if_it_doesnt_get_true) {
+	std::vector<int> v1 = { 1, 2, 4, 7, 10, 5 };
+
+	auto endIterator = (ph::until([](const int& i){ return i % 3 == 0; }) &&
+		ph::until([](const int& i){ return i % 2 == 0; })) || v1.end();
+
+	auto it = ph::find(v1.begin(), endIterator, 5);
+
+	BOOST_CHECK_EQUAL(*it, 5);
+	BOOST_CHECK_EQUAL(it - v1.begin(), 5);
+}
+
+BOOST_AUTO_TEST_CASE(find_and_operator_works_with_or_real_end_if_end_is_reached) {
+	std::vector<int> v1 = { 1, 2, 4, 7, 10, 7 };
+
+	auto endIterator = (ph::until([](const int& i){ return i % 3 == 0; }) &&
+		ph::until([](const int& i){ return i % 2 == 0; })) || v1.end();
+
+	auto it = ph::find(v1.begin(), endIterator, 5);
+
+	BOOST_CHECK(it == v1.end());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
