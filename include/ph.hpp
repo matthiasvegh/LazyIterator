@@ -8,17 +8,6 @@
 
 namespace ph {
 
-struct LazyStrIterator {
-	template<typename Iterator>
-	bool operator==(Iterator&& other) const {
-		return *other == '\0';
-	}
-};
-
-template<typename It> bool operator==(It&& it, const LazyStrIterator& s) { return s == std::forward<It>(it); }
-template<typename It> bool operator!=(const LazyStrIterator& s, It&& it) { return !(s == std::forward<It>(it)); }
-template<typename It> bool operator!=(It&& it, const LazyStrIterator& s) { return !(s == std::forward<It>(it)); }
-
 template<typename Iterator, typename Constraint>
 typename std::enable_if<std::is_same<Iterator, Constraint>::value, bool>::type checkPredicate(Iterator it, Constraint constraint) {
 	return it == constraint;
