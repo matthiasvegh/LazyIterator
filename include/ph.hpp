@@ -1,16 +1,10 @@
 #ifndef PH_HPP_
 #define PH_HPP_
 
-#include <tuple>
-#include <algorithm>
+#include <utility>
 #include <type_traits>
-#include <initializer_list>
-
-#include <boost/mpl/at.hpp>
-#include <boost/function_types/parameter_types.hpp>
 
 #include "detail.hpp"
-
 
 namespace ph {
 
