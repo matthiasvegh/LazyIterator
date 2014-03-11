@@ -3,16 +3,18 @@
 
 #include <utility>
 #include <type_traits>
+#include <boost/type_traits/has_equal_to.hpp>
 
 namespace ph {
 
+
 template<typename Iterator, typename Constraint>
-typename std::enable_if<std::is_same<Iterator, Constraint>::value, bool>::type checkPredicate(Iterator it, Constraint constraint) {
+typename std::enable_if<boost::has_equal_to<Iterator, Constraint, bool>::value, bool>::type checkPredicate(Iterator it, Constraint constraint) {
 	return it == constraint;
 }
 
 template<typename Iterator, typename Constraint>
-typename std::enable_if<!std::is_same<Iterator, Constraint>::value, bool>::type checkPredicate(Iterator it, Constraint constraint) {
+typename std::enable_if<!boost::has_equal_to<Iterator, Constraint, bool>::value, bool>::type checkPredicate(Iterator it, Constraint constraint) {
 	return constraint(*it);
 }
 
