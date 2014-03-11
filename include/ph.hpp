@@ -4,8 +4,6 @@
 #include <utility>
 #include <type_traits>
 
-#include "detail.hpp"
-
 namespace ph {
 
 template<typename Iterator, typename Constraint>
