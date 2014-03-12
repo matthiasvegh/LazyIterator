@@ -18,10 +18,8 @@ typename std::enable_if<!boost::has_equal_to<Iterator, Constraint, bool>::value,
 	return constraint(*it);
 }
 
-struct BaseNode {};
-
 template<class Constraint>
-struct LeafNode : BaseNode {
+struct LeafNode {
 
 	LeafNode(const Constraint& constraint) : constraint(constraint) {}
 
@@ -34,7 +32,7 @@ struct LeafNode : BaseNode {
 };
 
 template<typename LeftNode, typename RightNode>
-struct OrNode : BaseNode {
+struct OrNode {
 
 	OrNode(const LeftNode& leftNode, const RightNode& rightNode) : leftNode(leftNode), rightNode(rightNode) {}
 
@@ -48,7 +46,7 @@ struct OrNode : BaseNode {
 };
 
 template<typename LeftNode, typename RightNode>
-struct AndNode : BaseNode {
+struct AndNode {
 
 	AndNode(const LeftNode& leftNode, const RightNode& rightNode) : leftNode(leftNode), rightNode(rightNode) {}
 
@@ -62,7 +60,7 @@ struct AndNode : BaseNode {
 };
 
 template<typename OperandNode>
-struct NotNode : BaseNode {
+struct NotNode {
 
 	NotNode(const OperandNode& operandNode) : operandNode(operandNode) {}
 
@@ -74,72 +72,86 @@ struct NotNode : BaseNode {
 	OperandNode operandNode;
 };
 
+template<class T>
+struct IsNode : std::false_type {};
+
+template<typename R, typename L>
+struct IsNode<OrNode<R, L>> : std::true_type {};
+
+template<typename R, typename L>
+struct IsNode<AndNode<R, L>> : std::true_type {};
+
+template<typename T>
+struct IsNode<NotNode<T>> : std::true_type {};
+
+template<typename T>
+struct IsNode<LeafNode<T>> : std::true_type {};
 
 template<typename It, typename Node>
-typename std::enable_if<std::is_base_of<BaseNode, Node>::value, bool>::type operator==(const Node& node, It&& it) {
+typename std::enable_if<IsNode<Node>::value, bool>::type operator==(const Node& node, It&& it) {
 	return node(std::forward<It>(it));
 }
 
 template<typename It, typename Node>
-typename std::enable_if<std::is_base_of<BaseNode, Node>::value, bool>::type operator==(It&& it, const Node& node) {
+typename std::enable_if<IsNode<Node>::value, bool>::type operator==(It&& it, const Node& node) {
 	return node == std::forward<It>(it);
 }
 
 template<typename It, typename Node>
-typename std::enable_if<std::is_base_of<BaseNode, Node>::value, bool>::type operator!=(const Node& node, It&& it) {
+typename std::enable_if<IsNode<Node>::value, bool>::type operator!=(const Node& node, It&& it) {
 	return !(node == std::forward<It>(it));
 }
 
 template<typename It, typename Node>
-typename std::enable_if<std::is_base_of<BaseNode, Node>::value, bool>::type operator!=(It&& it, const Node& node) {
+typename std::enable_if<IsNode<Node>::value, bool>::type operator!=(It&& it, const Node& node) {
 	return !(node == std::forward<It>(it));
 }
 
 template<typename LeftNode, typename RightNode>
 typename std::enable_if<
-	std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
+	IsNode<LeftNode>::value && IsNode<RightNode>::value,
 	OrNode<LeftNode, RightNode>>::type operator||(const LeftNode& leftNode, const RightNode& rightNode) {
 	return OrNode<LeftNode, RightNode>(leftNode, rightNode);
 }
 
 template<typename LeftNode, typename RightNode>
 typename std::enable_if<
-	std::is_base_of<BaseNode, LeftNode>::value && !std::is_base_of<BaseNode, RightNode>::value,
+	IsNode<LeftNode>::value && !IsNode<RightNode>::value,
 	OrNode<LeftNode, LeafNode<RightNode>>>::type operator||(const LeftNode& leftNode, const RightNode& rightNode) {
 	return OrNode<LeftNode, LeafNode<RightNode>>(leftNode, LeafNode<RightNode>(rightNode));
 }
 
 template<typename LeftNode, typename RightNode>
 typename std::enable_if<
-	!std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
+	!IsNode<LeftNode>::value && IsNode<RightNode>::value,
 	OrNode<LeafNode<LeftNode>, LeafNode<RightNode>>>::type operator||(const LeftNode& leftNode, const RightNode& rightNode) {
 	return OrNode<LeafNode<LeftNode>, RightNode>(LeafNode<LeftNode>(leftNode), rightNode);
 }
 
 template<typename LeftNode, typename RightNode>
 typename std::enable_if<
-	std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
+	IsNode<LeftNode>::value && IsNode<RightNode>::value,
 	AndNode<LeftNode, RightNode>>::type operator&&(const LeftNode& leftNode, const RightNode& rightNode) {
 	return AndNode<LeftNode, RightNode>(leftNode, rightNode);
 }
 
 template<typename LeftNode, typename RightNode>
 typename std::enable_if<
-	std::is_base_of<BaseNode, LeftNode>::value && !std::is_base_of<BaseNode, RightNode>::value,
+	IsNode<LeftNode>::value && !IsNode<RightNode>::value,
 	AndNode<LeftNode, LeafNode<RightNode>>>::type operator&&(const LeftNode& leftNode, const RightNode& rightNode) {
 	return AndNode<LeftNode, LeafNode<RightNode>>(leftNode, LeafNode<RightNode>(rightNode));
 }
 
 template<typename LeftNode, typename RightNode>
 typename std::enable_if<
-	!std::is_base_of<BaseNode, LeftNode>::value && std::is_base_of<BaseNode, RightNode>::value,
+	!IsNode<LeftNode>::value && IsNode<RightNode>::value,
 	AndNode<LeafNode<LeftNode>, LeafNode<RightNode>>>::type operator&&(const LeftNode& leftNode, const RightNode& rightNode) {
 	return AndNode<LeafNode<LeftNode>, RightNode>(LeafNode<LeftNode>(leftNode), rightNode);
 }
 
 template<typename OperandNode>
 typename std::enable_if<
-	std::is_base_of<BaseNode, OperandNode>::value,
+	IsNode<OperandNode>::value,
 	NotNode<OperandNode>>::type operator!(const OperandNode& operandNode) {
 	return NotNode<OperandNode>(operandNode);
 }
