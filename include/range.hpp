@@ -1,0 +1,22 @@
+#ifndef RANGE_HPP_
+#define RANGE_HPP_
+
+template<typename Begin, typename End>
+class Range {
+	Begin _begin;
+	End _end;
+public:
+
+	Range(Begin _begin, End _end) :
+		_begin(std::move(_begin)),
+		_end(std::move(_end))
+	{}
+
+	const Begin& begin() const { return _begin; }
+	Begin& begin() { return _begin; }
+	const End& end() const { return _end; }
+	End& end() { return _end; }
+
+};
+
+#endif /* RANGE_HPP_ */
