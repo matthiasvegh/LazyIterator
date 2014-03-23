@@ -19,4 +19,10 @@ public:
 
 };
 
+template<typename Begin, typename End>
+auto make_range(Begin b, End e) {
+	return Range<Begin, End>{b, e};
+}
+
+
 #endif /* RANGE_HPP_ */
