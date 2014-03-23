@@ -12,6 +12,8 @@
 #include <iterator>
 #include <algorithm>
 
+#include "range.hpp"
+
 namespace ph {
 
 // Non-modifying sequence operations.
@@ -31,6 +33,18 @@ Begin find(Begin begin, End end, const ValueType& value) {
 	return begin;
 }
 
+template<typename Begin, typename End, typename ValueType>
+typename std::enable_if<std::is_same<Begin, End>::value, Begin>::type
+find(Range<Begin, End> r, const ValueType& v) {
+	return std::find<Begin, ValueType>(r.begin(), r.end(), v);
+}
+
+template<typename Begin, typename End, typename ValueType>
+typename std::enable_if<!std::is_same<Begin, End>::value, Begin>::type
+find(Range<Begin, End> r, const ValueType& v) {
+	return ph::find<Begin, End, ValueType>(r.begin(), r.end(), v);
+}
+
 template<typename Iterator, typename UnaryPredicate>
 Iterator find_if(Iterator begin, Iterator end, UnaryPredicate p) {
 	return std::find_if(begin, end, p);
@@ -43,6 +57,11 @@ Begin find_if(Begin begin, End end, UnaryPredicate p) {
 			return begin;
 	}
 	return begin;
+}
+
+template<typename Begin, typename End, typename UnaryPredicate>
+Begin find_if(Range<Begin, End> r, UnaryPredicate p) {
+	return find_if(r.begin(), r.end(), p);
 }
 
 template<typename Iterator, typename UnaryPredicate>
