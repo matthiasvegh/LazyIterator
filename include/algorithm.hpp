@@ -34,15 +34,8 @@ Begin find(Begin begin, End end, const ValueType& value) {
 }
 
 template<typename Begin, typename End, typename ValueType>
-typename std::enable_if<std::is_same<Begin, End>::value, Begin>::type
-find(Range<Begin, End> r, const ValueType& v) {
-	return std::find<Begin, ValueType>(r.begin(), r.end(), v);
-}
-
-template<typename Begin, typename End, typename ValueType>
-typename std::enable_if<!std::is_same<Begin, End>::value, Begin>::type
-find(Range<Begin, End> r, const ValueType& v) {
-	return ph::find<Begin, End, ValueType>(r.begin(), r.end(), v);
+Begin find(Range<Begin, End> r, const ValueType& v) {
+	return ph::find(r.begin(), r.end(), v);
 }
 
 template<typename Iterator, typename UnaryPredicate>
