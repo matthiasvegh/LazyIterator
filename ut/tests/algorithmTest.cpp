@@ -36,6 +36,29 @@ BOOST_AUTO_TEST_CASE(rangeIterator_find_test) {
 	BOOST_CHECK(ph::find(r, 2) == std::find(v.begin(), v.end(), 2));
 }
 
+BOOST_AUTO_TEST_CASE(empty_range_for_each_test) {
+	std::vector<int> v = {};
+	auto range = ph::make_iterator_range(v.begin(), v.end());
+	bool called = false;
+	ph::for_each(range, [&called](const int& v) { (void)v; called = true; });
+	BOOST_CHECK_EQUAL(called, false);
+}
+
+BOOST_AUTO_TEST_CASE(single_element_range_for_each_test) {
+	std::vector<int> v = {1};
+	auto range = ph::make_iterator_range(v.begin(), v.end());
+	int called = 0;
+	ph::for_each(range, [&called](const int& v) { (void)v; ++called; });
+	BOOST_CHECK_EQUAL(called, 1);
+}
+
+BOOST_AUTO_TEST_CASE(many_element_range_for_each_test) {
+	std::vector<int> v = {1, 2, 3};
+	auto range = ph::make_iterator_range(v.begin(), v.end());
+	int called = 0;
+	ph::for_each(range, [&called](const int& v) { (void)v; ++called; });
+	BOOST_CHECK_EQUAL(called, v.size());
+}
 
 BOOST_AUTO_TEST_CASE(distance_test_for_iterator_pair) {
 	std::vector<int> v = {1, 2, 3, 4, 5};

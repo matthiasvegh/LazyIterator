@@ -106,6 +106,11 @@ UnaryFunction for_each(Iterator begin, Iterator end, UnaryFunction f) {
 	return std::for_each(begin, end, f);
 }
 
+template<typename Range, typename UnaryFunction>
+UnaryFunction for_each(Range range, UnaryFunction f) {
+	return std::for_each(range.begin(), range.end(), f);
+}
+
 template<typename Begin, typename End, typename UnaryFunction>
 UnaryFunction for_each(Begin begin, End end, UnaryFunction f) {
 	for (; begin != end; ++begin) {
