@@ -1,5 +1,6 @@
 
 #include <boost/test/unit_test.hpp>
+#include "ph.hpp"
 #include "range.hpp"
 #include "algorithm.hpp"
 
@@ -30,7 +31,7 @@ BOOST_AUTO_TEST_CASE(normalIterator_find_if_not_test) {
 BOOST_AUTO_TEST_CASE(rangeIterator_find_test) {
 	std::vector<int> v = {1, 2, 3};
 
-	auto r = make_iterator_range(v.begin(), v.end());
+	auto r = ph::make_iterator_range(v.begin(), v.end());
 
 	BOOST_CHECK(ph::find(r, 2) == std::find(v.begin(), v.end(), 2));
 }
