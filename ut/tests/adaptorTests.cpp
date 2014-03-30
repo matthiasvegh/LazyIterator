@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(Map_Keys_Pipe_should_work_on_empty_range) {
 	std::map<int, int> m;
 
 	auto map_range = ph::make_iterator_range(m.begin(), m.end());
-	auto range = map_range | ph::adaptor::map_keys();
+	auto range = map_range | ph::adaptor::map_keys;
 
 	bool called = false;
 	ph::for_each(range.begin(), range.end(), [&called](decltype(*range.begin()) v) {

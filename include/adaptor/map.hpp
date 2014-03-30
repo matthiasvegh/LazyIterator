@@ -41,7 +41,7 @@ public:
 
 };
 
-auto map_keys() { return detail::dummy_map_range{}; }
+const static auto map_keys = detail::dummy_map_range{};
 
 }} // namespace ph::adaptor
 
