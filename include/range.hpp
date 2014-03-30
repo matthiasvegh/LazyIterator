@@ -11,9 +11,9 @@ class Range {
 	End _end;
 public:
 
-	Range(Begin _begin, End _end) :
-		_begin(std::move(_begin)),
-		_end(std::move(_end))
+	Range(const Begin _begin, const End& _end) :
+		_begin(_begin),
+		_end(_end)
 	{}
 
 	const Begin& begin() const { return _begin; }

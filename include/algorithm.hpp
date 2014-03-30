@@ -108,7 +108,7 @@ UnaryFunction for_each(Iterator begin, Iterator end, UnaryFunction f) {
 
 template<typename Range, typename UnaryFunction>
 UnaryFunction for_each(Range range, UnaryFunction f) {
-	return std::for_each(range.begin(), range.end(), f);
+	return ph::for_each(range.begin(), range.end(), f);
 }
 
 template<typename Begin, typename End, typename UnaryFunction>
