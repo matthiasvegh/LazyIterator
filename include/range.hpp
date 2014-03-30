@@ -1,5 +1,6 @@
 #ifndef RANGE_HPP_
 #define RANGE_HPP_
+#include <utility>
 
 template<typename Begin, typename End>
 class Range {
@@ -20,7 +21,7 @@ public:
 };
 
 template<typename Begin, typename End>
-auto make_range(Begin b, End e) {
+auto make_iterator_range(Begin b, End e) {
 	return Range<Begin, End>{b, e};
 }
 
