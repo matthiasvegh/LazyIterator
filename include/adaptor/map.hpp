@@ -43,12 +43,13 @@ public:
 
 auto map_keys() { return detail::dummy_map_range{}; }
 
+}} // namespace ph::adaptor
+
 template<typename Range>
-auto operator|(Range r, detail::dummy_map_range) {
-	return Map_Keys<decltype(r.begin()), decltype(r.end())>{r.begin(), r.end()};
+auto operator|(Range r, ph::adaptor::detail::dummy_map_range) {
+	return ph::adaptor::Map_Keys<decltype(r.begin()), decltype(r.end())>{r.begin(), r.end()};
 }
 
 
-}} // namespace ph::adaptor
 
 #endif /* ADAPTORS_MAP_HPP_ */
