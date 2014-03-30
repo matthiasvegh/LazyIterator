@@ -107,6 +107,14 @@ typename std::enable_if<IsNode<Node>::value, bool>::type operator!=(It&& it, con
 	return !(node == std::forward<It>(it));
 }
 
+template<typename It1, typename It2, template<typename> class Node>
+typename std::enable_if<IsNode<Node<It1>>::value && IsNode<Node<It2>>::value, bool>::type
+operator!=(Node<It1> lhs, Node<It2> rhs) {
+	auto tmpL = static_cast<It1>(lhs);
+	auto tmpR = static_cast<It2>(rhs);
+	return tmpL != tmpR;
+}
+
 template<typename LeftNode, typename RightNode>
 typename std::enable_if<
 	IsNode<LeftNode>::value && IsNode<RightNode>::value,

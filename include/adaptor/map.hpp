@@ -2,6 +2,7 @@
 #define ADAPTORS_MAP_HPP_
 #include <type_traits>
 #include "range.hpp"
+#include "ph.hpp"
 
 namespace ph { namespace adaptor {
 
@@ -77,7 +78,15 @@ public:
 const static auto map_keys = detail::dummy_map_keys_range{};
 const static auto map_values = detail::dummy_map_values_range{};
 
-}} // namespace ph::adaptor
+} // namespace ph::adaptor
+
+template<typename T>
+struct IsNode<adaptor::detail::map_key_iterator<T>> : std::true_type {};
+
+template<typename T>
+struct IsNode<adaptor::detail::map_value_iterator<T>> : std::true_type {};
+
+} // namespace ph
 
 template<typename Range>
 auto operator|(Range r, ph::adaptor::detail::dummy_map_keys_range) {
