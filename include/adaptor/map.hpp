@@ -1,20 +1,24 @@
 #ifndef ADAPTORS_MAP_HPP_
 #define ADAPTORS_MAP_HPP_
+#include <type_traits>
 #include "range.hpp"
 
 namespace ph { namespace adaptor {
 
 namespace detail {
 	template<typename Iterator>
-	class map_key_iterator: public Iterator {
+	class map_key_iterator: public std::decay<Iterator>::type {
 	public:
-		map_key_iterator(Iterator it): Iterator(it) {}
+		using Base = typename std::decay<Iterator>::type;
+		map_key_iterator(Iterator it): Base(it) {}
 		map_key_iterator() = default;
 
-		const auto& operator*() const { return Iterator::operator*().first; }
-		auto& operator*() { return Iterator::operator*().first; }
+		const auto& operator*() const { return Base::operator*().first; }
+		auto& operator*() { return Base::operator*().first; }
 
 	};
+
+	struct dummy_map_range { };
 } // namespace detail
 
 template<typename Begin, typename End>
@@ -27,7 +31,7 @@ public:
 	Map_Keys() = default;
 	Map_Keys(Begin _b, End _e):
 		b(detail::map_key_iterator<Begin>{_b}),
-	   	e(detail::map_key_iterator<End>{_e}) {}
+		e(detail::map_key_iterator<End>{_e}) {}
 
 	detail::map_key_iterator<Begin>& begin() { return b; }
 	const detail::map_key_iterator<Begin>& begin() const { return b; }
@@ -36,6 +40,13 @@ public:
 	const detail::map_key_iterator<End>& end() const { return e; }
 
 };
+
+auto map_keys() { return detail::dummy_map_range{}; }
+
+template<typename Range>
+auto operator|(Range r, detail::dummy_map_range) {
+	return Map_Keys<decltype(r.begin()), decltype(r.end())>{r.begin(), r.end()};
+}
 
 
 }} // namespace ph::adaptor
