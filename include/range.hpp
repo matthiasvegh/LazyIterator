@@ -30,7 +30,8 @@ auto make_iterator_range(Begin b, End e) {
 
 template<typename Begin, typename End>
 auto distance(Begin begin, End end) {
-	std::size_t answer = 0;
+	typename std::iterator_traits<Begin>::difference_type answer = 0;
+
 	for(; begin != end; ++begin) {
 		++answer;
 	}
